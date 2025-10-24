@@ -103,3 +103,14 @@ $RECYCLE.BIN/
 # Backup files
 *.bak
 *.backup
+
+# Excel files (business data - keep private)
+*.xlsx
+*.xls
+*.xlsm
+~$*.xlsx
+~$*.xls
+
+# Temporary scripts
+read_excel.js
+package.json
