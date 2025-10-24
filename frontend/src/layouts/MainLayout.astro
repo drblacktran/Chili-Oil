@@ -42,7 +42,7 @@ const navItems = [
 
   <body class="min-h-screen bg-gray-50">
     <!-- Sidebar -->
-    <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transform transition-transform duration-300 ease-in-out lg:translate-x-0">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
       <!-- Logo -->
       <div class="flex items-center justify-center h-16 bg-gray-800 border-b border-gray-700">
         <a href="/" class="flex items-center space-x-2">
@@ -187,17 +187,30 @@ const navItems = [
     <script>
       // Mobile menu toggle
       const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-      const sidebar = document.querySelector('aside');
+      const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('mobile-menu-overlay');
 
+      // Toggle sidebar on mobile
       mobileMenuToggle?.addEventListener('click', () => {
         sidebar?.classList.toggle('-translate-x-full');
         overlay?.classList.toggle('hidden');
       });
 
+      // Close sidebar when clicking overlay
       overlay?.addEventListener('click', () => {
         sidebar?.classList.add('-translate-x-full');
         overlay?.classList.add('hidden');
+      });
+
+      // Close sidebar when clicking a link on mobile
+      const sidebarLinks = sidebar?.querySelectorAll('a');
+      sidebarLinks?.forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth < 1024) {
+            sidebar?.classList.add('-translate-x-full');
+            overlay?.classList.add('hidden');
+          }
+        });
       });
 
       // User menu dropdown
@@ -213,11 +226,6 @@ const navItems = [
       document.addEventListener('click', () => {
         userMenuDropdown?.classList.add('hidden');
       });
-
-      // Hide sidebar on mobile by default
-      if (window.innerWidth < 1024) {
-        sidebar?.classList.add('-translate-x-full');
-      }
     </script>
   </body>
 </html>

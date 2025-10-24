@@ -7,6 +7,8 @@ import MainLayout from '../layouts/MainLayout.astro';
 import StatCard from '../components/StatCard';
 import DistributorCard from '../components/DistributorCard';
 import AlertCard from '../components/AlertCard';
+import MapView from '../components/MapView';
+import ViewToggle from '../components/ViewToggle';
 
 import {
   mockDashboardStats,
@@ -118,18 +120,22 @@ const today = new Date().toLocaleDateString('en-MY', {
           📍 Distributor Status Overview
         </h3>
         <p class="text-sm text-gray-600">
-          Real-time status of all 10 distributors
+          Real-time status of all 10 distributors across Melbourne
         </p>
       </div>
-      <a
-        href="/distributors"
-        class="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-50 transition-colors"
-      >
-        View All Distributors →
-      </a>
+      <div class="flex items-center space-x-3">
+        <ViewToggle client:load view="grid" onChange={(v) => console.log('View:', v)} />
+        <a
+          href="/distributors"
+          class="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          View All →
+        </a>
+      </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+    <!-- Grid View (default) -->
+    <div id="grid-view" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
       {mockDistributors.map((distributor) => (
         <DistributorCard
           client:load
@@ -137,6 +143,15 @@ const today = new Date().toLocaleDateString('en-MY', {
           onClick={() => console.log('Clicked:', distributor.code)}
         />
       ))}
+    </div>
+
+    <!-- Map View (placeholder - hidden by default) -->
+    <div id="map-view" class="hidden">
+      <MapView
+        client:load
+        distributors={mockDistributors}
+        onDistributorClick={(d) => console.log('Map clicked:', d.code)}
+      />
     </div>
 
     <!-- Distributor Summary Stats -->

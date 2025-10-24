@@ -7,7 +7,7 @@ export interface DashboardStats {
   totalInventory: number;
   activeDistributors: number;
   totalDistributors: number;
-  lowStockAlerts: number;
+  lowStockAlerts:  number;
   pendingTransfers: number;
 }
 
@@ -30,11 +30,17 @@ export interface DistributorOverview {
   code: string;
   city: string;
   state: string;
+  region: string; // For Melbourne: North, South, East, West, CBD
   status: DistributorStatus;
   totalStock: number;
   lowStockItems: number;
   lastRestocked?: string;
   phone: string;
+  // Geolocation for map view
+  latitude: number;
+  longitude: number;
+  address?: string;
+  postcode?: string;
 }
 
 export interface RecentActivity {
