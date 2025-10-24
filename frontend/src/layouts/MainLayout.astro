@@ -1,0 +1,223 @@
+---
+/**
+ * MainLayout - Primary layout for dashboard pages
+ * Features: Sidebar navigation, header with user menu, responsive design
+ */
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  currentPage?: string;
+}
+
+const {
+  title,
+  description = 'Chili Oil Distribution Management System',
+  currentPage = 'dashboard'
+} = Astro.props;
+
+// Navigation items
+const navItems = [
+  { name: 'Dashboard', href: '/', icon: '🏠', page: 'dashboard' },
+  { name: 'Products', href: '/products', icon: '📦', page: 'products' },
+  { name: 'Inventory', href: '/inventory', icon: '📊', page: 'inventory' },
+  { name: 'Transfers', href: '/transfers', icon: '🚚', page: 'transfers' },
+  { name: 'SMS Logs', href: '/sms', icon: '📱', page: 'sms' },
+  { name: 'Distributors', href: '/distributors', icon: '👥', page: 'distributors' },
+  { name: 'Reports', href: '/reports', icon: '📈', page: 'reports' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title} | Chili Oil Distribution</title>
+  </head>
+
+  <body class="min-h-screen bg-gray-50">
+    <!-- Sidebar -->
+    <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transform transition-transform duration-300 ease-in-out lg:translate-x-0">
+      <!-- Logo -->
+      <div class="flex items-center justify-center h-16 bg-gray-800 border-b border-gray-700">
+        <a href="/" class="flex items-center space-x-2">
+          <span class="text-2xl">🌶️</span>
+          <span class="text-xl font-bold text-red-500">Chili Oil</span>
+        </a>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+        {navItems.map((item) => (
+          <a
+            href={item.href}
+            class={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+              currentPage === item.page
+                ? 'bg-red-600 text-white'
+                : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+            }`}
+          >
+            <span class="text-xl">{item.icon}</span>
+            <span class="font-medium">{item.name}</span>
+          </a>
+        ))}
+      </nav>
+
+      <!-- Sidebar Footer -->
+      <div class="p-4 border-t border-gray-700">
+        <div class="flex items-center space-x-3 px-4 py-2">
+          <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+          <span class="text-sm text-gray-400">System Online</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="lg:pl-64">
+      <!-- Header -->
+      <header class="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+        <div class="flex items-center justify-between h-16 px-6">
+          <!-- Page Title / Breadcrumb -->
+          <div class="flex items-center space-x-4">
+            <button
+              id="mobile-menu-toggle"
+              class="lg:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+              aria-label="Toggle menu"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+
+            <div>
+              <h1 class="text-xl font-bold text-gray-900">{title}</h1>
+              <p class="text-sm text-gray-500">Head Office</p>
+            </div>
+          </div>
+
+          <!-- Header Right: Search, Notifications, User -->
+          <div class="flex items-center space-x-4">
+            <!-- Search (Desktop) -->
+            <div class="hidden md:block relative">
+              <input
+                type="search"
+                placeholder="Search products, SKU..."
+                class="w-64 pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              />
+              <svg
+                class="absolute left-3 top-2.5 w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+
+            <!-- Notifications -->
+            <button
+              class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+              aria-label="Notifications"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              <!-- Notification Badge -->
+              <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+
+            <!-- User Menu -->
+            <div class="relative">
+              <button
+                id="user-menu-button"
+                class="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                aria-label="User menu"
+              >
+                <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+                  <span class="text-sm font-bold text-white">TT</span>
+                </div>
+                <div class="hidden md:block text-left">
+                  <p class="text-sm font-medium text-gray-900">Tien Tran</p>
+                  <p class="text-xs text-gray-500">Admin</p>
+                </div>
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              <!-- Dropdown Menu (hidden by default) -->
+              <div
+                id="user-menu-dropdown"
+                class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1"
+              >
+                <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  👤 Profile
+                </a>
+                <a href="/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  ⚙️ Settings
+                </a>
+                <hr class="my-1 border-gray-200" />
+                <a href="/logout" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                  🚪 Logout
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <main class="p-6">
+        <slot />
+      </main>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div
+      id="mobile-menu-overlay"
+      class="hidden fixed inset-0 z-40 bg-gray-900 bg-opacity-50 lg:hidden"
+    ></div>
+
+    <!-- Basic Interactivity Script -->
+    <script>
+      // Mobile menu toggle
+      const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+      const sidebar = document.querySelector('aside');
+      const overlay = document.getElementById('mobile-menu-overlay');
+
+      mobileMenuToggle?.addEventListener('click', () => {
+        sidebar?.classList.toggle('-translate-x-full');
+        overlay?.classList.toggle('hidden');
+      });
+
+      overlay?.addEventListener('click', () => {
+        sidebar?.classList.add('-translate-x-full');
+        overlay?.classList.add('hidden');
+      });
+
+      // User menu dropdown
+      const userMenuButton = document.getElementById('user-menu-button');
+      const userMenuDropdown = document.getElementById('user-menu-dropdown');
+
+      userMenuButton?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        userMenuDropdown?.classList.toggle('hidden');
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', () => {
+        userMenuDropdown?.classList.add('hidden');
+      });
+
+      // Hide sidebar on mobile by default
+      if (window.innerWidth < 1024) {
+        sidebar?.classList.add('-translate-x-full');
+      }
+    </script>
+  </body>
+</html>

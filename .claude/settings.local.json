@@ -8,7 +8,10 @@
       "Bash(npm install)",
       "Bash(npx astro add:*)",
       "Read(//Users/tgtien/Desktop/Programming/**)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(tree:*)",
+      "Bash(npm run dev)"
     ],
     "deny": [],
     "ask": []
