@@ -1,0 +1,46 @@
+---
+/**
+ * Settings Page
+ * Customize branding, theme, and app configuration
+ */
+import MainLayout from '../layouts/MainLayout.astro';
+import SettingsForm from '../components/SettingsForm';
+---
+
+<MainLayout title="Settings" currentPage="settings">
+  <div class="max-w-4xl">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-2">
+        ⚙️ Settings
+      </h2>
+      <p class="text-sm text-gray-600">
+        Customize your distribution management system branding and appearance
+      </p>
+    </div>
+
+    <!-- Settings Form -->
+    <SettingsForm client:load />
+
+    <!-- Information Panel -->
+    <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+      <h3 class="text-lg font-bold text-blue-900 mb-3">
+        💡 About Customization
+      </h3>
+      <div class="space-y-2 text-sm text-blue-800">
+        <p>
+          <strong>Business Name:</strong> This will appear in the sidebar header and page titles.
+        </p>
+        <p>
+          <strong>Primary Color:</strong> Used for buttons, links, and accents throughout the app.
+        </p>
+        <p>
+          <strong>Logo:</strong> Choose an emoji that represents your business.
+        </p>
+        <p class="pt-2 border-t border-blue-200 mt-3">
+          <strong>Templates:</strong> Quick-start configurations for common distribution businesses.
+        </p>
+      </div>
+    </div>
+  </div>
+</MainLayout>

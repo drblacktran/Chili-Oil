@@ -13,9 +13,20 @@ interface Props {
 
 const {
   title,
-  description = 'Chili Oil Distribution Management System',
+  description,
   currentPage = 'dashboard'
 } = Astro.props;
+
+// Get app configuration (only at build time, client will load from localStorage)
+// For dynamic config, we'll handle it client-side
+const defaultConfig = {
+  businessName: 'Distribution Management System',
+  businessShortName: 'DMS',
+  logo: '🌶️',
+  primaryColor: '#DC2626',
+};
+
+const finalDescription = description || `${defaultConfig.businessName}`;
 
 // Navigation items
 const navItems = [
@@ -26,6 +37,7 @@ const navItems = [
   { name: 'SMS Logs', href: '/sms', icon: '📱', page: 'sms' },
   { name: 'Distributors', href: '/distributors', icon: '👥', page: 'distributors' },
   { name: 'Reports', href: '/reports', icon: '📈', page: 'reports' },
+  { name: 'Settings', href: '/settings', icon: '⚙️', page: 'settings' },
 ];
 ---
 
@@ -34,10 +46,10 @@ const navItems = [
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
+    <meta name="description" content={finalDescription} />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title} | Chili Oil Distribution</title>
+    <title id="page-title">{title} | {defaultConfig.businessShortName}</title>
   </head>
 
   <body class="min-h-screen bg-gray-50">
@@ -46,8 +58,10 @@ const navItems = [
       <!-- Logo -->
       <div class="flex items-center justify-center h-16 bg-gray-800 border-b border-gray-700">
         <a href="/" class="flex items-center space-x-2">
-          <span class="text-2xl">🌶️</span>
-          <span class="text-xl font-bold text-red-500">Chili Oil</span>
+          <span id="app-logo" class="text-2xl">{defaultConfig.logo}</span>
+          <span id="app-name" class="text-xl font-bold" style={`color: ${defaultConfig.primaryColor}`}>
+            {defaultConfig.businessShortName}
+          </span>
         </a>
       </div>
 
@@ -56,11 +70,12 @@ const navItems = [
         {navItems.map((item) => (
           <a
             href={item.href}
-            class={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+            class={`nav-link flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
               currentPage === item.page
-                ? 'bg-red-600 text-white'
+                ? 'active-nav-link text-white'
                 : 'text-gray-300 hover:bg-gray-800 hover:text-white'
             }`}
+            data-active={currentPage === item.page ? 'true' : 'false'}
           >
             <span class="text-xl">{item.icon}</span>
             <span class="font-medium">{item.name}</span>
@@ -226,6 +241,53 @@ const navItems = [
       document.addEventListener('click', () => {
         userMenuDropdown?.classList.add('hidden');
       });
+
+      // Load and apply app configuration from localStorage
+      function loadAppConfig() {
+        const defaultConfig = {
+          businessName: 'Distribution Management System',
+          businessShortName: 'DMS',
+          logo: '🌶️',
+          primaryColor: '#DC2626',
+        };
+
+        try {
+          const stored = localStorage.getItem('app_config');
+          const config = stored ? { ...defaultConfig, ...JSON.parse(stored) } : defaultConfig;
+
+          // Update logo
+          const logoElement = document.getElementById('app-logo');
+          if (logoElement) logoElement.textContent = config.logo;
+
+          // Update app name
+          const nameElement = document.getElementById('app-name');
+          if (nameElement) {
+            nameElement.textContent = config.businessShortName;
+            nameElement.style.color = config.primaryColor;
+          }
+
+          // Update page title
+          const pageTitle = document.getElementById('page-title');
+          if (pageTitle) {
+            const currentTitle = pageTitle.textContent?.split('|')[0].trim() || 'Dashboard';
+            pageTitle.textContent = `${currentTitle} | ${config.businessShortName}`;
+          }
+
+          // Apply primary color to active nav links
+          const activeNavLinks = document.querySelectorAll('.active-nav-link');
+          activeNavLinks.forEach(link => {
+            (link as HTMLElement).style.backgroundColor = config.primaryColor;
+          });
+
+          // Apply primary color CSS variable
+          document.documentElement.style.setProperty('--primary-color', config.primaryColor);
+        } catch (error) {
+          console.error('Failed to load app config:', error);
+        }
+      }
+
+      // Load config on page load
+      loadAppConfig();
     </script>
   </body>
 </html>

@@ -2,13 +2,14 @@
 /**
  * Dashboard Homepage
  * Head Office command center for managing distributors, products, and inventory
+ * Simplified view with visual analytics and key metrics
  */
 import MainLayout from '../layouts/MainLayout.astro';
 import StatCard from '../components/StatCard';
 import DistributorCard from '../components/DistributorCard';
 import AlertCard from '../components/AlertCard';
-import MapView from '../components/MapView';
-import ViewToggle from '../components/ViewToggle';
+import BarChart from '../components/BarChart';
+import DonutChart from '../components/DonutChart';
 
 import {
   mockDashboardStats,
@@ -17,6 +18,75 @@ import {
   mockRecentActivity,
   mockQuickActions,
 } from '../utils/mockData';
+import { mockProductCategories } from '../utils/mockProducts';
+
+// Prepare chart data
+const distributorStatusData = [
+  {
+    label: 'Healthy',
+    value: mockDistributors.filter(d => d.status === 'healthy').length,
+    color: '#16A34A',
+    icon: '✅'
+  },
+  {
+    label: 'Low Stock',
+    value: mockDistributors.filter(d => d.status === 'low_stock').length,
+    color: '#EAB308',
+    icon: '⚠️'
+  },
+  {
+    label: 'Critical',
+    value: mockDistributors.filter(d => d.status === 'critical').length,
+    color: '#DC2626',
+    icon: '🚨'
+  },
+];
+
+const regionDistributionData = [
+  {
+    label: 'CBD',
+    value: mockDistributors.filter(d => d.region === 'CBD').length,
+    color: '#DC2626',
+    icon: '🏙️'
+  },
+  {
+    label: 'North',
+    value: mockDistributors.filter(d => d.region === 'North').length,
+    color: '#2563EB',
+    icon: '⬆️'
+  },
+  {
+    label: 'South',
+    value: mockDistributors.filter(d => d.region === 'South').length,
+    color: '#16A34A',
+    icon: '⬇️'
+  },
+  {
+    label: 'East',
+    value: mockDistributors.filter(d => d.region === 'East').length,
+    color: '#9333EA',
+    icon: '➡️'
+  },
+  {
+    label: 'West',
+    value: mockDistributors.filter(d => d.region === 'West').length,
+    color: '#EA580C',
+    icon: '⬅️'
+  },
+  {
+    label: 'South East',
+    value: mockDistributors.filter(d => d.region === 'South East').length,
+    color: '#CA8A04',
+    icon: '↘️'
+  },
+];
+
+const productCategoryData = mockProductCategories.map(cat => ({
+  label: cat.name,
+  value: cat.productCount,
+  color: cat.color || '#6B7280',
+  icon: cat.icon,
+}));
 
 // Calculate time-based greeting
 const hour = new Date().getHours();
@@ -81,202 +151,144 @@ const today = new Date().toLocaleDateString('en-MY', {
     />
   </div>
 
-  <!-- Critical Alerts Section -->
-  <div class="mb-8">
-    <div class="flex items-center justify-between mb-4">
-      <div>
-        <h3 class="text-xl font-bold text-gray-900">
-          ⚠️ Critical Alerts
-        </h3>
-        <p class="text-sm text-gray-600">
-          Products requiring immediate restocking
-        </p>
-      </div>
-      <div class="flex space-x-2">
-        <button class="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors">
-          📱 Send Alerts
-        </button>
-        <a
-          href="/inventory/low-stock"
-          class="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-50 transition-colors"
-        >
-          View All
-        </a>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {mockLowStockAlerts.slice(0, 4).map((alert) => (
-        <AlertCard client:load alert={alert} />
-      ))}
-    </div>
+  <!-- Quick Actions Bar -->
+  <div class="mb-8 grid grid-cols-2 md:grid-cols-5 gap-3">
+    {mockQuickActions.map((action) => (
+      <a
+        href={action.href}
+        class="flex items-center space-x-2 p-4 bg-white rounded-lg shadow border border-gray-200 hover:border-red-500 hover:shadow-md transition-all group"
+      >
+        <span class="text-2xl">{action.icon}</span>
+        <span class="text-sm font-semibold text-gray-900 group-hover:text-red-600">
+          {action.label}
+        </span>
+      </a>
+    ))}
   </div>
 
-  <!-- Distributor Overview Section -->
-  <div class="mb-8">
-    <div class="flex items-center justify-between mb-4">
-      <div>
-        <h3 class="text-xl font-bold text-gray-900">
-          📍 Distributor Status Overview
+  <!-- Analytics Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Distributor Status Chart -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+      <DonutChart
+        client:load
+        title="Distributor Health Status"
+        data={distributorStatusData}
+        size={180}
+      />
+    </div>
+
+    <!-- Regional Distribution Chart -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+      <BarChart
+        client:load
+        title="Distributors by Region"
+        data={regionDistributionData}
+        horizontal={true}
+      />
+    </div>
+
+    <!-- Product Category Distribution -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+      <DonutChart
+        client:load
+        title="Product Categories"
+        data={productCategoryData}
+        size={180}
+      />
+    </div>
+
+    <!-- Top Critical Alerts -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-bold text-gray-900">
+          ⚠️ Critical Low Stock Alerts
         </h3>
-        <p class="text-sm text-gray-600">
-          Real-time status of all 10 distributors across Melbourne
-        </p>
-      </div>
-      <div class="flex items-center space-x-3">
-        <ViewToggle client:load view="grid" onChange={(v) => console.log('View:', v)} />
         <a
-          href="/distributors"
-          class="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+          href="/inventory/low-stock"
+          class="text-sm text-red-600 hover:text-red-700 font-semibold"
         >
           View All →
         </a>
       </div>
-    </div>
-
-    <!-- Grid View (default) -->
-    <div id="grid-view" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-      {mockDistributors.map((distributor) => (
-        <DistributorCard
-          client:load
-          distributor={distributor}
-          onClick={() => console.log('Clicked:', distributor.code)}
-        />
-      ))}
-    </div>
-
-    <!-- Map View (placeholder - hidden by default) -->
-    <div id="map-view" class="hidden">
-      <MapView
-        client:load
-        distributors={mockDistributors}
-        onDistributorClick={(d) => console.log('Map clicked:', d.code)}
-      />
-    </div>
-
-    <!-- Distributor Summary Stats -->
-    <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="bg-green-50 rounded-lg p-4 text-center">
-        <p class="text-2xl font-bold text-green-700">
-          {mockDistributors.filter((d) => d.status === 'healthy').length}
-        </p>
-        <p class="text-sm text-gray-600 mt-1">Healthy</p>
-      </div>
-      <div class="bg-yellow-50 rounded-lg p-4 text-center">
-        <p class="text-2xl font-bold text-yellow-700">
-          {mockDistributors.filter((d) => d.status === 'low_stock').length}
-        </p>
-        <p class="text-sm text-gray-600 mt-1">Low Stock</p>
-      </div>
-      <div class="bg-red-50 rounded-lg p-4 text-center">
-        <p class="text-2xl font-bold text-red-700">
-          {mockDistributors.filter((d) => d.status === 'critical').length}
-        </p>
-        <p class="text-sm text-gray-600 mt-1">Critical</p>
-      </div>
-      <div class="bg-gray-50 rounded-lg p-4 text-center">
-        <p class="text-2xl font-bold text-gray-700">
-          {mockDistributors.filter((d) => d.status === 'inactive').length}
-        </p>
-        <p class="text-sm text-gray-600 mt-1">Inactive</p>
+      <div class="space-y-3">
+        {mockLowStockAlerts.slice(0, 3).map((alert) => (
+          <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
+            <div class="flex-1">
+              <p class="text-sm font-semibold text-gray-900">{alert.productName}</p>
+              <p class="text-xs text-gray-600">{alert.locationName}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm font-bold text-red-700">{alert.currentStock}</p>
+              <p class="text-xs text-gray-500">Min: {alert.minimumStock}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   </div>
 
-  <!-- Two Column Layout: Recent Activity + Quick Actions -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Recent Activity (2/3 width) -->
-    <div class="lg:col-span-2">
-      <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-bold text-gray-900">
-            🕒 Recent Activity
-          </h3>
-          <a href="/activity" class="text-sm text-red-600 hover:text-red-700 font-semibold">
-            View All →
-          </a>
-        </div>
-
-        <div class="space-y-4">
-          {mockRecentActivity.map((activity) => (
-            <div class="flex items-start space-x-3 pb-4 border-b border-gray-100 last:border-0">
-              <!-- Activity Icon -->
-              <div class="flex-shrink-0 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                <span class="text-xl">
-                  {activity.type === 'transfer' && '🚚'}
-                  {activity.type === 'sms' && '📱'}
-                  {activity.type === 'product' && '📦'}
-                  {activity.type === 'adjustment' && '📝'}
-                </span>
-              </div>
-
-              <!-- Activity Details -->
-              <div class="flex-1 min-w-0">
-                <p class="text-sm text-gray-900 font-medium">
-                  {activity.description}
-                </p>
-                <p class="text-xs text-gray-500 mt-1">
-                  {activity.user && `${activity.user} • `}
-                  {new Date(activity.timestamp).toLocaleString()}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+  <!-- Distributor Overview Section - Simplified -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-xl font-bold text-gray-900">
+        📍 Distributor Network
+      </h3>
+      <a
+        href="/distributors"
+        class="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+      >
+        View All Distributors →
+      </a>
     </div>
 
-    <!-- Quick Actions (1/3 width) -->
-    <div class="lg:col-span-1">
-      <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-        <h3 class="text-lg font-bold text-gray-900 mb-4">
-          ⚡ Quick Actions
-        </h3>
+    <!-- Show critical distributors only on dashboard -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+      {mockDistributors
+        .filter((d) => d.status === 'critical' || d.status === 'low_stock')
+        .map((distributor) => (
+          <DistributorCard
+            client:load
+            distributor={distributor}
+            onClick={() => console.log('Clicked:', distributor.code)}
+          />
+        ))}
+    </div>
 
-        <div class="space-y-2">
-          {mockQuickActions.map((action) => (
-            <a
-              href={action.href}
-              class={`flex items-center space-x-3 p-3 rounded-lg border-2 border-gray-200 hover:border-${action.color}-500 hover:bg-${action.color}-50 transition-all group`}
-            >
-              <span class="text-2xl">{action.icon}</span>
-              <span class="text-sm font-semibold text-gray-900 group-hover:text-${action.color}-700">
-                {action.label}
-              </span>
-            </a>
-          ))}
-        </div>
+    <a
+      href="/distributors"
+      class="block text-center py-3 bg-gray-50 rounded-lg border border-gray-200 text-sm text-gray-600 hover:bg-gray-100 transition-colors"
+    >
+      + {mockDistributors.filter(d => d.status === 'healthy').length} more healthy distributors
+    </a>
+  </div>
 
-        <!-- System Status -->
-        <div class="mt-6 pt-6 border-t border-gray-200">
-          <h4 class="text-sm font-bold text-gray-900 mb-3">
-            System Status
-          </h4>
-          <div class="space-y-2">
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-gray-600">API Server</span>
-              <span class="flex items-center text-green-600">
-                <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                Online
-              </span>
-            </div>
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-gray-600">Database</span>
-              <span class="flex items-center text-green-600">
-                <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                Connected
-              </span>
-            </div>
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-gray-600">SMS Service</span>
-              <span class="flex items-center text-green-600">
-                <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                Active
-              </span>
-            </div>
+  <!-- Recent Activity - Compact -->
+  <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold text-gray-900">
+        🕒 Recent Activity
+      </h3>
+      <a href="/activity" class="text-sm text-red-600 hover:text-red-700 font-semibold">
+        View All →
+      </a>
+    </div>
+
+    <div class="space-y-3">
+      {mockRecentActivity.slice(0, 5).map((activity) => (
+        <div class="flex items-center space-x-3 pb-3 border-b border-gray-100 last:border-0">
+          <span class="text-xl flex-shrink-0">
+            {activity.type === 'transfer' && '🚚'}
+            {activity.type === 'sms' && '📱'}
+            {activity.type === 'product' && '📦'}
+            {activity.type === 'adjustment' && '📝'}
+          </span>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm text-gray-900">{activity.description}</p>
+            <p class="text-xs text-gray-500">{new Date(activity.timestamp).toLocaleString()}</p>
           </div>
         </div>
-      </div>
+      ))}
     </div>
   </div>
 </MainLayout>

@@ -1,0 +1,236 @@
+---
+/**
+ * Products Page
+ * Multi-category product management demonstrating flexibility beyond single product line
+ */
+import MainLayout from '../layouts/MainLayout.astro';
+import ProductCard from '../components/ProductCard';
+import CategoryFilter from '../components/CategoryFilter';
+import { mockProducts, mockProductCategories } from '../utils/mockProducts';
+
+// Get unique categories with product counts
+const categories = mockProductCategories;
+---
+
+<MainLayout title="Products" currentPage="products">
+  <!-- Page Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">
+          📦 Product Catalog
+        </h2>
+        <p class="text-sm text-gray-600">
+          Managing {mockProducts.length} products across {categories.length} categories
+        </p>
+      </div>
+      <div class="flex items-center space-x-3">
+        <button class="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+          📥 Import
+        </button>
+        <button class="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+          📤 Export
+        </button>
+        <a
+          href="/products/new"
+          class="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors"
+        >
+          + Add Product
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Banner -->
+  <div class="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+    <div class="flex items-start space-x-3">
+      <span class="text-2xl">💡</span>
+      <div class="flex-1">
+        <h3 class="text-sm font-bold text-blue-900 mb-1">
+          Multi-Product Line Support
+        </h3>
+        <p class="text-sm text-blue-800">
+          This system is designed to handle diverse product categories beyond just chili oil.
+          Currently showing products across <strong>{categories.length} categories</strong>:
+          {categories.map(c => c.name).join(', ')}.
+          Easily expand to new product lines by adding more categories.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Overview Cards -->
+  <div class="mb-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+    {categories.map((category) => (
+      <button
+        class="category-card bg-white rounded-lg shadow border-2 border-gray-200 hover:border-gray-400 transition-all p-4 text-left"
+        data-category={category.name}
+      >
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-3xl">{category.icon}</span>
+          <span class="text-2xl font-bold text-gray-900">{category.productCount}</span>
+        </div>
+        <h3 class="text-sm font-bold text-gray-900 mb-1">{category.name}</h3>
+        <p class="text-xs text-gray-600">{category.description}</p>
+      </button>
+    ))}
+  </div>
+
+  <!-- Filter and Search Bar -->
+  <div class="mb-6">
+    <CategoryFilter client:load categories={categories} />
+  </div>
+
+  <!-- Products Grid -->
+  <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    {mockProducts.map((product) => (
+      <ProductCard
+        client:load
+        product={product}
+        onEdit={() => console.log('Edit:', product.id)}
+        onDelete={() => console.log('Delete:', product.id)}
+      />
+    ))}
+  </div>
+
+  <!-- Empty State (hidden when products exist) -->
+  <div id="empty-state" class="hidden text-center py-16">
+    <div class="text-6xl mb-4">📦</div>
+    <h3 class="text-xl font-bold text-gray-900 mb-2">No products found</h3>
+    <p class="text-gray-600 mb-6">Try adjusting your filters or search term</p>
+    <button id="clear-filters" class="px-6 py-2 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200">
+      Clear Filters
+    </button>
+  </div>
+
+  <!-- Product Statistics -->
+  <div class="mt-8 bg-white rounded-lg shadow border border-gray-200 p-6">
+    <h3 class="text-lg font-bold text-gray-900 mb-4">
+      📊 Product Statistics
+    </h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div>
+        <p class="text-3xl font-bold text-gray-900">
+          {mockProducts.length}
+        </p>
+        <p class="text-sm text-gray-600 mt-1">Total Products</p>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-green-700">
+          {mockProducts.filter(p => p.status === 'active').length}
+        </p>
+        <p class="text-sm text-gray-600 mt-1">Active</p>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-yellow-700">
+          {mockProducts.filter(p => p.isFeatured).length}
+        </p>
+        <p class="text-sm text-gray-600 mt-1">Featured</p>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-red-700">
+          {mockProducts.filter(p => p.spiceLevel && p.spiceLevel !== 'none').length}
+        </p>
+        <p class="text-sm text-gray-600 mt-1">With Spice Level</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Breakdown Chart Placeholder -->
+  <div class="mt-8 bg-white rounded-lg shadow border border-gray-200 p-6">
+    <h3 class="text-lg font-bold text-gray-900 mb-4">
+      🥧 Products by Category
+    </h3>
+    <div class="space-y-3">
+      {categories.map((category) => {
+        const percentage = (category.productCount / mockProducts.length) * 100;
+        return (
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <div class="flex items-center space-x-2">
+                <span class="text-xl">{category.icon}</span>
+                <span class="text-sm font-medium text-gray-900">{category.name}</span>
+              </div>
+              <span class="text-sm font-bold text-gray-700">
+                {category.productCount} ({percentage.toFixed(0)}%)
+              </span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div
+                class="h-2 rounded-full"
+                style={`background-color: ${category.color}; width: ${percentage}%`}
+              ></div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+
+  <!-- Client-side filtering script -->
+  <script>
+    // Category filtering
+    const categoryCards = document.querySelectorAll('.category-card');
+    const productsGrid = document.getElementById('products-grid');
+    const emptyState = document.getElementById('empty-state');
+    let activeCategory = 'all';
+
+    categoryCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const category = card.getAttribute('data-category');
+
+        // Toggle category filter
+        if (activeCategory === category) {
+          activeCategory = 'all';
+          card.classList.remove('border-red-500', 'bg-red-50');
+        } else {
+          // Remove active state from all cards
+          categoryCards.forEach(c => {
+            c.classList.remove('border-red-500', 'bg-red-50');
+          });
+
+          // Set active state
+          activeCategory = category;
+          card.classList.add('border-red-500', 'bg-red-50');
+        }
+
+        // Filter products
+        filterProducts();
+      });
+    });
+
+    function filterProducts() {
+      const products = document.querySelectorAll('[data-product-category]');
+      let visibleCount = 0;
+
+      products.forEach(product => {
+        const productCategory = product.getAttribute('data-product-category');
+
+        if (activeCategory === 'all' || productCategory === activeCategory) {
+          product.style.display = '';
+          visibleCount++;
+        } else {
+          product.style.display = 'none';
+        }
+      });
+
+      // Show/hide empty state
+      if (visibleCount === 0) {
+        productsGrid?.classList.add('hidden');
+        emptyState?.classList.remove('hidden');
+      } else {
+        productsGrid?.classList.remove('hidden');
+        emptyState?.classList.add('hidden');
+      }
+    }
+
+    // Clear filters
+    document.getElementById('clear-filters')?.addEventListener('click', () => {
+      activeCategory = 'all';
+      categoryCards.forEach(c => {
+        c.classList.remove('border-red-500', 'bg-red-50');
+      });
+      filterProducts();
+    });
+  </script>
+</MainLayout>
