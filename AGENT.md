@@ -1,7 +1,41 @@
-# AI Agent Instructions - Chili Oil Distribution MVP
+# AI Agent Instructions - Benjamin's Chili Oil Distribution MVP
 
 ## Project Overview
-This is a **web-based inventory and distribution management system** for a chili oil business. The system manages products, tracks inventory across multiple locations (1 head office + 10 distributors), handles stock transfers, and sends SMS notifications.
+This is a **web-based inventory and distribution management system** for **Benjamin's Chili Oil**, a retail chili oil business operating in Melbourne, Victoria, Australia with plans to expand Australia-wide.
+
+### Business Model
+- **Company**: Benjamin's Chili Oil
+- **Type**: Manufacturer → Retail Stores Distribution
+- **Product**: Primarily Benjamin's Chili Oil (retail)
+- **Primary Market**: Melbourne, Victoria, Australia
+- **Expansion Plan**: Australia-wide as business grows
+- **Head Office**: Benjamin's Kitchen, 758 Heidelberg Road Alphington VIC 3078
+- **Current Stores**: 10 retail locations across Melbourne metro area:
+  1. Benjamin's Kitchen (Head Office) - Alphington VIC 3078
+  2. Greenmart - Camberwell VIC 3124
+  3. Chat Phat Supermarket - Richmond VIC 3121
+  4. Minh Phat Supermarket - Abbotsford VIC 3067
+  5. Circle G Richmond Supermarket - Richmond VIC 3121
+  6. Son Butcher & Frozen Seafood - Richmond VIC 3121
+  7. Fu Lin Asian Grocery Supermarket - Camberwell VIC 3124
+  8. Hokkien Market - Burwood East VIC 3151
+  9. Oasis - Fairfield VIC 3078
+  10. Talad Thai Melbourne - Abbotsford VIC 3067
+- **Contact Persons**: New, Bill, Victor, Kim, Harry, My, Richard, Ming, George, Lisa
+- **Pricing Model**: Commission-based retail (80% retail purchase commission)
+- **Restock Cycle**: 21-day automatic restock calculation
+- **Stock Tracking**: Current stock (10-40 units), minimum stock threshold (10-30 units), unit cost, retail price
+- **Currency**: AUD (Australian Dollars)
+- **Phone Format**: Australian (+61 or 04xx xxx xxx)
+
+### System Capabilities
+- Product catalog with SKU and image upload
+- Inventory tracking across 10 retail store locations
+- Stock level monitoring with automatic restock date calculation (21-day cycle)
+- Low stock SMS alerts to store contacts via Twilio
+- Stock movement audit trail
+- Commission and pricing management
+- Dashboard with inventory overview across all stores
 
 ---
 

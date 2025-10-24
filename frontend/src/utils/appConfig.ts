@@ -16,8 +16,8 @@ export interface AppConfig {
 
 // Default configuration
 const defaultConfig: AppConfig = {
-  businessName: 'Distribution Management System',
-  businessShortName: 'DMS',
+  businessName: "Benjamin's Chili Oil Distribution",
+  businessShortName: "Benjamin's",
   primaryColor: '#DC2626', // red-600
   secondaryColor: '#991B1B', // red-800
   logo: '🌶️',
@@ -89,9 +89,9 @@ export const colorPresets = [
 
 // Common business types with suggested branding
 export const businessTemplates = {
-  'chili-oil': {
-    businessName: 'Chili Oil Distribution',
-    businessShortName: 'Chili Oil',
+  'benjamins-chili': {
+    businessName: "Benjamin's Chili Oil Distribution",
+    businessShortName: "Benjamin's",
     primaryColor: '#DC2626',
     logo: '🌶️',
   },
