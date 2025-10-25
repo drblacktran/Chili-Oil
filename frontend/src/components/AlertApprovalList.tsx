@@ -66,16 +66,16 @@ export default function AlertApprovalList({ pendingAlerts }: AlertApprovalListPr
   };
 
   const handleApprove = (alertId: string) => {
-    const alert = alerts.find(a => a.id === alertId);
-    if (!alert) return;
+    const alertItem = alerts.find(a => a.id === alertId);
+    if (!alertItem) return;
 
     console.log('Approving alert:', alertId);
 
     // In real app, would call API
-    alert(
+    window.alert(
       `SMS Alert Approved!\n\n` +
-      `To: ${alert.recipient_name} (${alert.recipient_phone})\n` +
-      `Message: ${alert.sms_message.substring(0, 100)}...\n\n` +
+      `To: ${alertItem.recipient_name} (${alertItem.recipient_phone})\n` +
+      `Message: ${alertItem.sms_message.substring(0, 100)}...\n\n` +
       `This would:\n` +
       `- Send SMS via Twilio\n` +
       `- Update alert status to 'sent'\n` +
@@ -106,15 +106,15 @@ export default function AlertApprovalList({ pendingAlerts }: AlertApprovalListPr
       return newSet;
     });
 
-    alert(`Alert rejected: ${reason}`);
+    window.alert(`Alert rejected: ${reason}`);
   };
 
   const handleEdit = (alertId: string) => {
-    const alert = alerts.find(a => a.id === alertId);
-    if (!alert) return;
+    const alertItem = alerts.find(a => a.id === alertId);
+    if (!alertItem) return;
 
     setEditingId(alertId);
-    setEditedMessage(alert.sms_message);
+    setEditedMessage(alertItem.sms_message);
   };
 
   const handleSaveEdit = (alertId: string) => {
@@ -122,7 +122,7 @@ export default function AlertApprovalList({ pendingAlerts }: AlertApprovalListPr
       a.id === alertId ? { ...a, sms_message: editedMessage } : a
     ));
     setEditingId(null);
-    alert('Message updated!');
+    window.alert('Message updated!');
   };
 
   const handleCancelEdit = () => {
@@ -135,12 +135,12 @@ export default function AlertApprovalList({ pendingAlerts }: AlertApprovalListPr
     if (!dateTime) return;
 
     console.log('Scheduling alert:', alertId, dateTime);
-    alert(`Alert scheduled for: ${dateTime}`);
+    window.alert(`Alert scheduled for: ${dateTime}`);
   };
 
   const handleBulkApprove = () => {
     if (selectedIds.size === 0) {
-      alert('No alerts selected');
+      window.alert('No alerts selected');
       return;
     }
 
@@ -148,7 +148,7 @@ export default function AlertApprovalList({ pendingAlerts }: AlertApprovalListPr
 
     console.log('Bulk approving:', Array.from(selectedIds));
 
-    alert(
+    window.alert(
       `${selectedIds.size} alerts approved!\n\n` +
       `This would send all selected SMS messages via Twilio.`
     );

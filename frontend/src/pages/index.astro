@@ -7,7 +7,6 @@
 import MainLayout from '../layouts/MainLayout.astro';
 import StatCard from '../components/StatCard';
 import DistributorCard from '../components/DistributorCard';
-import AlertCard from '../components/AlertCard';
 import BarChart from '../components/BarChart';
 import DonutChart from '../components/DonutChart';
 
@@ -105,7 +104,7 @@ const today = new Date().toLocaleDateString('en-MY', {
   <!-- Welcome Header -->
   <div class="mb-8">
     <h2 class="text-2xl font-bold text-gray-900 mb-1">
-      {greeting}, Tien! 👋
+      {greeting}, Tien 👋
     </h2>
     <p class="text-sm text-gray-600">
       {today} • Here's what's happening with your distribution network

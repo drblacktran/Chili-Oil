@@ -87,7 +87,7 @@ export default function BatchUpdateModal({
         >
           {/* Header */}
           <div className="bg-blue-600 text-white px-6 py-4 rounded-t-lg">
-            <div class="flex items-center justify-between">
+            <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold">📦 Batch Stock Update</h2>
               <button
                 onClick={handleClose}

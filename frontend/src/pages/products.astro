@@ -178,6 +178,7 @@ const categories = mockProductCategories;
     categoryCards.forEach(card => {
       card.addEventListener('click', () => {
         const category = card.getAttribute('data-category');
+        if (!category) return;
 
         // Toggle category filter
         if (activeCategory === category) {
@@ -205,12 +206,13 @@ const categories = mockProductCategories;
 
       products.forEach(product => {
         const productCategory = product.getAttribute('data-product-category');
+        const htmlProduct = product as HTMLElement;
 
         if (activeCategory === 'all' || productCategory === activeCategory) {
-          product.style.display = '';
+          htmlProduct.style.display = '';
           visibleCount++;
         } else {
-          product.style.display = 'none';
+          htmlProduct.style.display = 'none';
         }
       });
 

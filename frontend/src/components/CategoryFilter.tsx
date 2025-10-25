@@ -3,10 +3,10 @@
  * Search and filter interface for products
  */
 import React, { useState } from 'react';
-import type { ProductCategory } from '../types/product';
+import type { ProductCategoryInfo } from '../types/product';
 
 interface CategoryFilterProps {
-  categories: ProductCategory[];
+  categories: ProductCategoryInfo[];
 }
 
 export default function CategoryFilter({ categories }: CategoryFilterProps) {

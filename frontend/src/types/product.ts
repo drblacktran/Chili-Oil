@@ -60,7 +60,7 @@ export interface ProductWithInventory extends Product {
   lowStockLocations: number;
 }
 
-export interface ProductCategory {
+export interface ProductCategoryInfo {
   id: string;
   name: string;
   description?: string;

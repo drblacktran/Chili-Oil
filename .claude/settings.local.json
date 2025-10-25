@@ -21,7 +21,12 @@
       "Bash(npm uninstall:*)",
       "Bash(npm audit)",
       "Bash(lsof:*)",
-      "Bash(kill:*)"
+      "Bash(kill:*)",
+      "Bash(npm run typecheck)",
+      "Bash(npm install:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(chmod:*)",
+      "Bash(./.githooks/pre-commit:*)"
     ],
     "deny": [],
     "ask": []

@@ -2,7 +2,7 @@
  * Mock Product Data
  * Demonstrates multi-product line support
  */
-import type { Product, ProductCategory as ProductCategoryType } from '../types/product';
+import type { Product, ProductCategoryInfo } from '../types/product';
 
 export const mockProducts: Product[] = [
   // Chili Oil Products
@@ -212,7 +212,7 @@ export const mockProducts: Product[] = [
   },
 ];
 
-export const mockProductCategories: ProductCategoryType[] = [
+export const mockProductCategories: ProductCategoryInfo[] = [
   {
     id: '1',
     name: 'Chili Oil',
