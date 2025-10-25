@@ -1,0 +1,102 @@
+---
+/**
+ * New Stock Transfer Page
+ * Create transfers from head office to stores with suggested quantities
+ */
+import MainLayout from '../../layouts/MainLayout.astro';
+import TransferForm from '../../components/TransferForm';
+
+import { mockInventoryItems } from '../../utils/mockInventoryData';
+
+// Extract unique locations
+const locations = mockInventoryItems.map(item => item.location).filter(Boolean);
+
+// Head office (from location default)
+const headOffice = locations.find(loc => loc?.type === 'head_office');
+
+// Retail stores (to locations)
+const stores = locations.filter(loc => loc?.type === 'retail_store');
+---
+
+<MainLayout title="New Stock Transfer" currentPage="transfers">
+  <!-- Page Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="flex items-center space-x-3 mb-2">
+          <a
+            href="/transfers"
+            class="text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            ← Back to Transfers
+          </a>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+          🚚 New Stock Transfer
+        </h1>
+        <p class="text-sm text-gray-600">
+          Transfer inventory from head office to retail stores
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transfer Form -->
+  <TransferForm
+    client:load
+    inventoryItems={mockInventoryItems}
+    headOffice={headOffice}
+    stores={stores}
+  />
+
+  <!-- Transfer Guidelines -->
+  <div class="mt-8 bg-blue-50 rounded-lg border border-blue-200 p-6">
+    <h3 class="text-sm font-bold text-blue-900 mb-3">
+      📖 Transfer Guidelines
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
+      <div>
+        <h4 class="font-semibold text-blue-900 mb-1">💡 Suggested Quantities</h4>
+        <p>
+          The system calculates suggested quantities based on:
+          <ul class="list-disc list-inside mt-1 space-y-1">
+            <li>Deficit from ideal stock (80% of max)</li>
+            <li>Projected sales (avg daily sales × cycle days)</li>
+            <li>Current minimum stock requirements</li>
+          </ul>
+        </p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-blue-900 mb-1">🎯 Transfer Types</h4>
+        <p>
+          <ul class="list-disc list-inside space-y-1">
+            <li><strong>Scheduled Restock:</strong> Regular 21-day cycle deliveries</li>
+            <li><strong>Emergency:</strong> Critical stock situations</li>
+            <li><strong>Adjustment:</strong> Stock corrections or balancing</li>
+          </ul>
+        </p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-blue-900 mb-1">📝 Best Practices</h4>
+        <p>
+          <ul class="list-disc list-inside space-y-1">
+            <li>Verify stock levels before confirming</li>
+            <li>Add delivery notes for driver reference</li>
+            <li>Schedule transfers on preferred delivery days</li>
+          </ul>
+        </p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-blue-900 mb-1">🔄 After Transfer</h4>
+        <p>
+          <ul class="list-disc list-inside space-y-1">
+            <li>Stock levels update automatically</li>
+            <li>Last restock date is recorded</li>
+            <li>Next restock date is calculated</li>
+            <li>Movement is logged in audit trail</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </div>
+</MainLayout>

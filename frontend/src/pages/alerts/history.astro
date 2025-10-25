@@ -1,0 +1,49 @@
+---
+/**
+ * SMS Alerts History Page
+ * View sent and rejected alerts
+ */
+import MainLayout from '../../layouts/MainLayout.astro';
+import { mockSentAlerts } from '../../utils/mockAlertsData';
+---
+
+<MainLayout title="SMS History" currentPage="sms">
+  <!-- Page Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="flex items-center space-x-3 mb-2">
+          <a
+            href="/alerts/pending"
+            class="text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            ← Back to Pending
+          </a>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+          📋 SMS Alert History
+        </h1>
+        <p class="text-sm text-gray-600">
+          View all sent, failed, and rejected alerts
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coming Soon -->
+  <div class="bg-white rounded-lg shadow border border-gray-200 p-12 text-center">
+    <span class="text-6xl">📜</span>
+    <h2 class="text-2xl font-bold text-gray-900 mt-4 mb-2">
+      Full History Coming Soon
+    </h2>
+    <p class="text-gray-600 mb-6">
+      This page will show complete SMS log with filtering, search, and export
+    </p>
+    <a
+      href="/alerts/pending"
+      class="px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors inline-block"
+    >
+      Back to Pending Alerts
+    </a>
+  </div>
+</MainLayout>

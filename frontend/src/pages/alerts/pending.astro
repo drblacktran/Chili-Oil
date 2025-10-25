@@ -1,0 +1,134 @@
+---
+/**
+ * Pending Alerts Approval Page
+ * Review and approve SMS alerts before sending
+ */
+import MainLayout from '../../layouts/MainLayout.astro';
+import AlertApprovalList from '../../components/AlertApprovalList';
+
+import { mockPendingAlerts, mockSentAlerts } from '../../utils/mockAlertsData';
+
+// Count by priority
+const urgentCount = mockPendingAlerts.filter(a => a.priority === 'urgent').length;
+const highCount = mockPendingAlerts.filter(a => a.priority === 'high').length;
+const normalCount = mockPendingAlerts.filter(a => a.priority === 'normal').length;
+---
+
+<MainLayout title="SMS Alerts" currentPage="sms">
+  <!-- Page Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+          📱 SMS Alert Approval
+        </h1>
+        <p class="text-sm text-gray-600">
+          Review and approve alerts before sending to stores
+        </p>
+      </div>
+      <div class="flex space-x-3">
+        <a
+          href="/alerts/history"
+          class="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          📋 View History
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-semibold text-gray-600">Pending Alerts</p>
+          <p class="text-3xl font-bold text-gray-900 mt-1">{mockPendingAlerts.length}</p>
+        </div>
+        <span class="text-4xl">📬</span>
+      </div>
+    </div>
+
+    <div class="bg-red-50 rounded-lg shadow border border-red-200 p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-semibold text-red-700">Urgent</p>
+          <p class="text-3xl font-bold text-red-900 mt-1">{urgentCount}</p>
+        </div>
+        <span class="text-4xl">🚨</span>
+      </div>
+    </div>
+
+    <div class="bg-yellow-50 rounded-lg shadow border border-yellow-200 p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-semibold text-yellow-700">High Priority</p>
+          <p class="text-3xl font-bold text-yellow-900 mt-1">{highCount}</p>
+        </div>
+        <span class="text-4xl">⚠️</span>
+      </div>
+    </div>
+
+    <div class="bg-blue-50 rounded-lg shadow border border-blue-200 p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-semibold text-blue-700">Normal</p>
+          <p class="text-3xl font-bold text-blue-900 mt-1">{normalCount}</p>
+        </div>
+        <span class="text-4xl">🔔</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approval Instructions -->
+  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+    <div class="flex items-start space-x-3">
+      <span class="text-2xl">💡</span>
+      <div class="flex-1">
+        <h3 class="text-sm font-bold text-blue-900 mb-1">SMS Alert Workflow</h3>
+        <p class="text-sm text-blue-800">
+          All SMS alerts require your approval before being sent to stores. Review the message content, verify recipient details, and approve to send via Twilio. You can also edit messages, schedule for later, or reject alerts.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pending Alerts List -->
+  <AlertApprovalList
+    client:load
+    pendingAlerts={mockPendingAlerts}
+  />
+
+  <!-- Help Section -->
+  <div class="mt-8 bg-gray-50 rounded-lg border border-gray-200 p-6">
+    <h3 class="text-sm font-bold text-gray-900 mb-3">
+      ❓ Alert Types Explained
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+      <div>
+        <h4 class="font-semibold text-gray-900 mb-1">🚨 Critical Stock Alert</h4>
+        <p>Triggered when stock falls to 50% below minimum. Requires immediate action.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-gray-900 mb-1">⚠️ Low Stock Alert</h4>
+        <p>Triggered when stock reaches minimum threshold. Restock should be scheduled.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-gray-900 mb-1">🔔 Upcoming Restock</h4>
+        <p>Reminder sent 3 days before scheduled restock date to confirm delivery.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-gray-900 mb-1">📅 Overdue Restock</h4>
+        <p>Sent when restock date has passed and delivery hasn't been completed.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-gray-900 mb-1">🆘 Emergency Request</h4>
+        <p>Store manager requested immediate restock via emergency button.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-gray-900 mb-1">📊 Weekly Summary</h4>
+        <p>Scheduled summary of stock levels and upcoming restocks (future feature).</p>
+      </div>
+    </div>
+  </div>
+</MainLayout>

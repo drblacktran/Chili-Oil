@@ -1,0 +1,130 @@
+---
+/**
+ * Store Settings Page
+ * Configure store-specific inventory settings
+ */
+import MainLayout from '../../../layouts/MainLayout.astro';
+import StoreSettingsForm from '../../../components/StoreSettingsForm';
+
+import { mockInventoryItems } from '../../../utils/mockInventoryData';
+
+// Get store ID from URL params
+const { id } = Astro.params;
+
+// Find inventory item for this store
+const inventoryItem = mockInventoryItems.find(item => item.location_id === id);
+const store = inventoryItem?.location;
+
+if (!store) {
+  return Astro.redirect('/inventory');
+}
+---
+
+<MainLayout title={`Settings - ${store.name}`} currentPage="inventory">
+  <!-- Page Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="flex items-center space-x-3 mb-2">
+          <a
+            href="/inventory"
+            class="text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            ← Back to Inventory
+          </a>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+          ⚙️ Store Settings
+        </h1>
+        <p class="text-sm text-gray-600">
+          Configure inventory and restock settings for {store.name}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Store Info Card -->
+  <div class="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+    <div class="flex items-start space-x-4">
+      <div class="flex-shrink-0 w-16 h-16 bg-red-600 rounded-lg flex items-center justify-center text-white text-2xl font-bold">
+        {store.name.substring(0, 2).toUpperCase()}
+      </div>
+      <div class="flex-1">
+        <h2 class="text-xl font-bold text-gray-900">{store.name}</h2>
+        <p class="text-sm text-gray-600 mt-1">{store.code}</p>
+        <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div>
+            <span class="text-gray-500">Address:</span>
+            <p class="font-semibold text-gray-900">{store.address_line1}</p>
+            <p class="text-gray-600">{store.city}, {store.state} {store.postal_code}</p>
+          </div>
+          <div>
+            <span class="text-gray-500">Contact:</span>
+            <p class="font-semibold text-gray-900">{store.contact_person || 'N/A'}</p>
+            <p class="text-gray-600">{store.phone}</p>
+          </div>
+          <div>
+            <span class="text-gray-500">Region:</span>
+            <p class="font-semibold text-gray-900">{store.region}</p>
+          </div>
+          <div>
+            <span class="text-gray-500">Type:</span>
+            <p class="font-semibold text-gray-900 capitalize">{store.type.replace('_', ' ')}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Form -->
+  <StoreSettingsForm
+    client:load
+    store={store}
+    inventoryItem={inventoryItem}
+  />
+
+  <!-- Help Section -->
+  <div class="mt-8 bg-blue-50 rounded-lg border border-blue-200 p-6">
+    <h3 class="text-sm font-bold text-blue-900 mb-3">
+      💡 Settings Guide
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
+      <div>
+        <h4 class="font-semibold text-blue-900 mb-1">📅 Restock Cycle Days</h4>
+        <p>
+          Number of days between scheduled restocks. Default is 21 days. Shorter cycles for high-turnover stores.
+        </p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-blue-900 mb-1">📦 Min/Max Stock Levels</h4>
+        <p>
+          Minimum triggers low stock alerts. Maximum is storage capacity. Ideal stock is automatically calculated.
+        </p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-blue-900 mb-1">🎯 Ideal Stock Percentage</h4>
+        <p>
+          Target stock level as percentage of maximum (default 80%). Used for restock quantity suggestions.
+        </p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-blue-900 mb-1">📊 Average Daily Sales</h4>
+        <p>
+          Manual input for sales velocity. Used to project stockout dates and calculate suggested restock quantities.
+        </p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-blue-900 mb-1">🚚 Delivery Preferences</h4>
+        <p>
+          Preferred day and time for deliveries. Helps with logistics planning and driver scheduling.
+        </p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-blue-900 mb-1">🌟 Seasonal Multiplier</h4>
+        <p>
+          Adjust stock levels for seasonal demand. 1.0 = normal, 1.5 = 50% increase, 0.8 = 20% decrease.
+        </p>
+      </div>
+    </div>
+  </div>
+</MainLayout>

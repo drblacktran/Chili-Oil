@@ -6,6 +6,7 @@
 import { useState, useMemo } from 'react';
 import InventoryTable from './InventoryTable';
 import InventoryFilters from './InventoryFilters';
+import BatchUpdateModal from './BatchUpdateModal';
 import type { InventoryItem, InventoryFilters as IFilters } from '../types/inventory';
 
 interface InventoryDashboardProps {
@@ -15,6 +16,8 @@ interface InventoryDashboardProps {
 
 export default function InventoryDashboard({ inventoryItems, regions }: InventoryDashboardProps) {
   const [filters, setFilters] = useState<IFilters>({});
+  const [showBatchModal, setShowBatchModal] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   // Apply filters to inventory items
   const filteredItems = useMemo(() => {
@@ -49,13 +52,34 @@ export default function InventoryDashboard({ inventoryItems, regions }: Inventor
     });
   }, [inventoryItems, filters]);
 
+  // Get selected items
+  const selectedItems = useMemo(() => {
+    return inventoryItems.filter(item => selectedIds.includes(item.id));
+  }, [inventoryItems, selectedIds]);
+
   const handleFilterChange = (newFilters: IFilters) => {
     setFilters(newFilters);
   };
 
-  const handleBatchUpdate = (selectedIds: string[]) => {
-    console.log('Batch update requested for:', selectedIds);
-    alert(`Batch update feature coming soon!\nSelected stores: ${selectedIds.length}`);
+  const handleBatchUpdate = (ids: string[]) => {
+    setSelectedIds(ids);
+    setShowBatchModal(true);
+  };
+
+  const handleBatchUpdateSubmit = (newStockLevel: number, reason: string) => {
+    console.log('Batch update:', { selectedIds, newStockLevel, reason });
+
+    // In a real app, this would call an API endpoint
+    alert(
+      `Batch update submitted!\n\n` +
+      `Stores: ${selectedIds.length}\n` +
+      `New stock level: ${newStockLevel}\n` +
+      `Reason: ${reason}\n\n` +
+      `This would create stock_movements records and update inventory.`
+    );
+
+    setShowBatchModal(false);
+    setSelectedIds([]);
   };
 
   const handleTransfer = (inventoryId: string) => {
@@ -81,6 +105,13 @@ export default function InventoryDashboard({ inventoryItems, regions }: Inventor
         inventoryItems={filteredItems}
         onBatchUpdate={handleBatchUpdate}
         onTransfer={handleTransfer}
+      />
+
+      <BatchUpdateModal
+        isOpen={showBatchModal}
+        onClose={() => setShowBatchModal(false)}
+        selectedItems={selectedItems}
+        onUpdate={handleBatchUpdateSubmit}
       />
     </div>
   );
