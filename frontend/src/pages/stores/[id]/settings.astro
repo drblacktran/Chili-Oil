@@ -8,15 +8,22 @@ import StoreSettingsForm from '../../../components/StoreSettingsForm';
 
 import { mockInventoryItems } from '../../../utils/mockInventoryData';
 
-// Enable SSR for dynamic routes
-export const prerender = false;
+// Enable static prerendering for this dynamic route
+export const prerender = true;
 
-// Get store ID from URL params
-const { id } = Astro.params;
+// Generate static paths for all stores at build time
+export async function getStaticPaths() {
+  return mockInventoryItems.map(item => ({
+    params: { id: item.location_id },
+    props: {
+      inventoryItem: item,
+      store: item.location
+    }
+  }));
+}
 
-// Find inventory item for this store
-const inventoryItem = mockInventoryItems.find(item => item.location_id === id);
-const store = inventoryItem?.location;
+// Get props from getStaticPaths
+const { inventoryItem, store } = Astro.props;
 
 if (!store) {
   return Astro.redirect('/inventory');
