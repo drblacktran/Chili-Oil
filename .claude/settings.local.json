@@ -11,7 +11,12 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(tree:*)",
-      "Bash(npm run dev)"
+      "Bash(npm run dev)",
+      "Bash(python3:*)",
+      "Bash(cd:*)",
+      "Bash(pip3 install:*)",
+      "Bash(git reset:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []

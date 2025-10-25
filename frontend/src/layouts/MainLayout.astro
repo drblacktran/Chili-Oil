@@ -4,6 +4,8 @@
  * Features: Sidebar navigation, header with user menu, responsive design
  */
 import '../styles/global.css';
+import PWAInstallPrompt from '../components/PWAInstallPrompt';
+import OfflineIndicator from '../components/OfflineIndicator';
 
 interface Props {
   title: string;
@@ -197,6 +199,10 @@ const navItems = [
       id="mobile-menu-overlay"
       class="hidden fixed inset-0 z-40 bg-gray-900 bg-opacity-50 lg:hidden"
     ></div>
+
+    <!-- PWA Components -->
+    <PWAInstallPrompt client:load />
+    <OfflineIndicator client:load />
 
     <!-- Basic Interactivity Script -->
     <script>

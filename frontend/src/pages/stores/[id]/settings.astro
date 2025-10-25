@@ -8,6 +8,9 @@ import StoreSettingsForm from '../../../components/StoreSettingsForm';
 
 import { mockInventoryItems } from '../../../utils/mockInventoryData';
 
+// Enable SSR for dynamic routes
+export const prerender = false;
+
 // Get store ID from URL params
 const { id } = Astro.params;
 
