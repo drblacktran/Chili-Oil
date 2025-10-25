@@ -27,7 +27,7 @@ const formatCurrency = (amount: number): string => {
   }).format(amount);
 };
 
-// Calculate stores needing restock this week
+// Calculate stores needing to restock this week
 const today = new Date();
 const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
 const restockThisWeek = mockInventoryItems.filter(item => {
