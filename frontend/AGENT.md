@@ -12,10 +12,11 @@ This is a web-based inventory and distribution management system for Benjamin's 
 
 ### Business Model
 
-- **Type:** Manufacturer to Retail Stores Distribution
+- **Type:** Manufacturer to Retail Stores Distribution (evolving to multi-tier)
 - **Primary Market:** Melbourne, Victoria, Australia
-- **Expansion Plan:** Australia-wide
+- **Expansion Plan:** Australia-wide via regional hubs
 - **Current Stores:** 10 retail locations across Melbourne (see business.config.local.ts)
+- **Distribution Model:** Transitioning from star topology (Head Office → Stores) to multi-tier network (Head Office → Regional Hubs → Stores)
 
 ### Business Configuration
 
@@ -43,6 +44,7 @@ cp business.config.example.ts business.config.local.ts
 
 ### System Capabilities
 
+**Phase 1: Current System**
 - Product catalog with SKU tracking
 - Inventory tracking across 10 retail store locations
 - Stock level monitoring with automatic restock date calculation (21-day cycle)
@@ -51,6 +53,16 @@ cp business.config.example.ts business.config.local.ts
 - Commission and pricing management
 - Dashboard with inventory overview across all stores
 - Progressive Web App (PWA) support for offline access
+
+**Phase 2: Hub Expansion System (In Progress)**
+- Regional hub management (shipping companies, restaurants, warehouses)
+- Multi-tier distribution network (Head Office → Hubs → Stores)
+- Hub expansion scenario planning with economic viability analysis
+- Custom region management (hybrid: 7 default Melbourne regions + user-defined)
+- CSV import for existing distributors and prospective partners
+- Automated break-even and ROI calculations
+- Hub performance analytics and coverage visualization
+- Multi-tier stock movement tracking (head-to-hub, hub-to-store)
 
 ---
 
@@ -88,10 +100,10 @@ cp business.config.example.ts business.config.local.ts
 
 The database uses PostgreSQL with application-layer constraints instead of database-level constraints for flexibility. All business logic is handled in the application code.
 
-**Total Tables:** 7 core tables
-**Total Indexes:** ~40 indexes for query optimization
-**Total Triggers:** 4 automatic update triggers
-**Total Functions:** 1 profit calculation function
+**Total Tables:** 11 core tables (7 Phase 1 + 4 Phase 2 hub expansion)
+**Total Indexes:** ~60 indexes for query optimization
+**Total Triggers:** 5 automatic update triggers
+**Total Functions:** 2 (profit calculation + hub economics calculation)
 
 ### Table 1: products
 
@@ -592,6 +604,392 @@ INSERT INTO locations (
   21, 100, 500,
   'active'
 );
+```
+
+---
+
+## Phase 2: Hub Expansion System
+
+### Architecture Overview
+
+The hub expansion system evolves the distribution model from **star topology** to a **multi-tier network**:
+
+```
+Current (Star):                    Future (Multi-Tier):
+    [Head Office]                        [Head Office]
+         |                                      |
+   +-----+-----+                    +-----------+-----------+
+   |     |     |                    |                       |
+[Store][Store][Store]         [Regional Hub]          [Regional Hub]
+                                    |                       |
+                                +---+---+               +---+---+
+                                |       |               |       |
+                            [Store] [Store]         [Store] [Store]
+```
+
+**Benefits:**
+- **Cost savings**: 30-40% reduction through bulk shipments to hubs
+- **Faster restocks**: Local hubs deliver in 2-4 hours vs 2-3 days from head office
+- **Market expansion**: Partner with shipping companies/restaurants to showcase products
+- **Scalability**: Add stores in new regions without increasing head office workload
+
+### Region Management (Hybrid Approach)
+
+**7 Default Melbourne Regions:**
+
+```typescript
+// utils/melbourneRegions.ts
+export const MELBOURNE_DEFAULT_REGIONS = [
+  {
+    name: 'CBD & Inner City',
+    postcodes: ['3000','3002','3004','3006','3008','3010','3065','3066','3067','3121'],
+    hub_priority: 'HIGH',
+    estimated_stores: 15,
+    suggested_hub_location: 'Queen Victoria Market area',
+    color: '#DC2626'
+  },
+  {
+    name: 'Northern Corridor',
+    postcodes: ['3051','3053','3054','3055','3056','3057','3058','3072','3073','3074'],
+    hub_priority: 'HIGH',
+    estimated_stores: 12,
+    suggested_hub_location: 'Brunswick - Sydney Road',
+    color: '#2563EB'
+  },
+  {
+    name: 'Eastern Suburbs',
+    postcodes: ['3101','3102','3103','3104','3105','3122','3123','3124'],
+    hub_priority: 'MEDIUM',
+    estimated_stores: 10,
+    color: '#16A34A'
+  },
+  {
+    name: 'Bayside & South',
+    postcodes: ['3141','3142','3181','3182','3183','3184','3185'],
+    hub_priority: 'MEDIUM',
+    estimated_stores: 8,
+    color: '#9333EA'
+  },
+  {
+    name: 'Western Suburbs',
+    postcodes: ['3011','3012','3013','3015','3016','3020','3021'],
+    hub_priority: 'MEDIUM',
+    estimated_stores: 9,
+    color: '#EA580C'
+  },
+  {
+    name: 'South East Melbourne',
+    postcodes: ['3150','3168','3169','3170','3171','3172'],
+    hub_priority: 'LOW',
+    estimated_stores: 6,
+    color: '#CA8A04'
+  },
+  {
+    name: 'Outer Growth Corridors',
+    postcodes: ['3023','3029','3030','3977','3975'],
+    hub_priority: 'FUTURE',
+    estimated_stores: 4,
+    color: '#6B7280'
+  }
+];
+```
+
+**Region Features:**
+- **Auto-assignment**: Stores automatically assigned to regions by postcode
+- **Customizable**: Users can edit default regions or create new ones
+- **Visual**: Each region has a color for dashboard visualization
+- **Hub planning**: Regions tagged with hub priority (HIGH, MEDIUM, LOW, FUTURE)
+
+### Hub Expansion Economics
+
+**Economic Viability Calculator:**
+
+```typescript
+// utils/hubEconomics.ts
+export const HUB_COST_ASSUMPTIONS = {
+  // Current Direct Shipping
+  DIRECT_SHIPPING_COST_PER_SHIPMENT: 15.00,
+  SHIPMENTS_PER_STORE_PER_MONTH: 2,
+  
+  // With Hub
+  BULK_SHIPPING_DISCOUNT_RATE: 0.40,  // 40% cheaper for bulk
+  LOCAL_DELIVERY_COST_PER_SHIPMENT: 5.00,
+  AVERAGE_ORDER_VALUE: 500.00,
+  
+  // Costs
+  DEFAULT_SETUP_COST: 5000.00,
+  DEFAULT_STORAGE_FEE: 200.00,
+  DEFAULT_COMMISSION_RATE: 5.00,  // percentage
+};
+
+export function calculateHubEconomics(
+  storeCount: number,
+  commissionRate: number,
+  storageFee: number,
+  setupCost: number
+) {
+  const currentMonthly = 
+    storeCount * 
+    HUB_COST_ASSUMPTIONS.SHIPMENTS_PER_STORE_PER_MONTH * 
+    HUB_COST_ASSUMPTIONS.DIRECT_SHIPPING_COST_PER_SHIPMENT;
+  
+  const bulkShipments = 4; // Weekly to hub
+  const bulkCost = 
+    bulkShipments * 
+    (storeCount * 15.00 * (1 - 0.40));
+  
+  const localDeliveries = 
+    storeCount * 2 * 5.00;
+  
+  const hubCommission = 
+    storeCount * 2 * 500.00 * (commissionRate / 100);
+  
+  const projectedMonthly = 
+    bulkCost + localDeliveries + hubCommission + storageFee;
+  
+  const monthlySavings = currentMonthly - projectedMonthly;
+  const breakEvenMonths = monthlySavings > 0 
+    ? Math.ceil(setupCost / monthlySavings)
+    : null;
+  const roi12Months = setupCost > 0
+    ? ((monthlySavings * 12) / setupCost) * 100
+    : null;
+  
+  return {
+    current: currentMonthly,
+    projected: projectedMonthly,
+    savings: monthlySavings,
+    breakEven: breakEvenMonths,
+    roi: roi12Months,
+    isViable: monthlySavings > 100 && storeCount >= 3 && breakEvenMonths <= 24
+  };
+}
+```
+
+**Minimum Viability Criteria:**
+- **Minimum stores**: 3 stores in target region
+- **Minimum savings**: $100/month
+- **Maximum break-even**: 24 months
+- **Ideal**: 5+ stores, $500+/month savings, 12-month break-even
+
+### Hub Types & Partners
+
+**Three Hub Partner Types:**
+
+1. **Shipping Companies** (Logistics Focus)
+   - Primary capability: Warehousing and fast delivery
+   - Commission: 5% of product value
+   - Best for: High-volume, time-sensitive distribution
+   
+2. **Restaurants** (Marketing + Distribution)
+   - Primary capability: Product showcase to customers
+   - Secondary: Local distribution to nearby stores
+   - Commission: 7% (higher due to marketing value)
+   - Best for: Brand building, new market entry
+   
+3. **Dedicated Warehouses**
+   - Primary capability: Large storage capacity
+   - Best for: Mature regions with high volume
+
+### New Database Tables
+
+**Phase 2 adds 4 tables:**
+
+1. **custom_regions** - Geographic regions for hub planning
+2. **regional_hubs** - Hub partner management
+3. **hub_expansion_scenarios** - Economic planning for new hubs
+4. **hub_csv_imports** - Import distributors/partners from CSV
+
+**Enhanced existing tables:**
+- `locations` - Added `location_tier`, `hub_capabilities`, `business_model`
+- `stock_movements` - Added `movement_tier`, `via_hub_id`, `is_bulk_shipment`
+
+### New Types
+
+```typescript
+// types/hub.ts
+export interface CustomRegion {
+  id: string;
+  name: string;
+  description: string;
+  type: 'default' | 'custom';
+  color: string;
+  boundary_type: 'postcode_list' | 'geographic_polygon' | 'radius';
+  postcodes: string[];
+  hub_priority: 'HIGH' | 'MEDIUM' | 'LOW' | 'FUTURE';
+  estimated_stores: number;
+  suggested_hub_location: string;
+  rationale: string;
+  is_active: boolean;
+}
+
+export interface RegionalHub {
+  id: string;
+  location_id: string;
+  hub_type: 'shipping_company' | 'restaurant' | 'warehouse';
+  partner_company_name: string;
+  coverage_regions: string[];
+  max_storage_capacity: number;
+  current_stock_level: number;
+  ideal_buffer_stock: number;
+  stores_served: number;
+  average_delivery_time_hours: number;
+  commission_rate: number;
+  monthly_storage_fee: number;
+  is_active: boolean;
+  onboarding_date: string;
+}
+
+export interface HubExpansionScenario {
+  id: string;
+  scenario_name: string;
+  target_regions: string[];
+  status: 'planning' | 'approved' | 'in_progress' | 'operational' | 'rejected';
+  proposed_hub_type: 'shipping_company' | 'restaurant' | 'warehouse';
+  partner_company_name?: string;
+  
+  // Economic Analysis
+  stores_in_target_area: number;
+  current_total_monthly_cost: number;
+  projected_total_monthly_cost: number;
+  monthly_savings: number;
+  break_even_months: number;
+  roi_percentage: number;
+  
+  // Costs
+  setup_cost: number;
+  proposed_commission_rate: number;
+  proposed_storage_fee: number;
+  
+  business_case?: string;
+  created_at: string;
+}
+
+export interface HubCSVImport {
+  id: string;
+  import_type: 'existing_distributors' | 'prospective_partners';
+  file_name: string;
+  total_rows: number;
+  processed_rows: number;
+  failed_rows: number;
+  status: 'pending' | 'processed' | 'failed';
+  import_date: string;
+}
+```
+
+### New Routes (Phase 2)
+
+```
+/hubs                       → Hub management dashboard
+/hubs/expansion/planning    → Hub expansion scenario planning
+/hubs/[id]/dashboard        → Individual hub performance
+/hubs/csv/import            → CSV import wizard
+/settings/regions           → Region management
+```
+
+### New Components (Phase 2)
+
+**Hub Management:**
+- `HubCard.tsx` - Display hub status and coverage
+- `HubScenarioCard.tsx` - Show expansion scenario with economics
+- `CreateHubScenarioModal.tsx` - Form for new scenario with preview
+- `CSVImportWizard.tsx` - Multi-step CSV import
+- `RegionCard.tsx` - Display region with stores and hubs
+
+**Visualizations:**
+- `StockFlowDiagram.tsx` - Visualize Head Office → Hub → Store flow
+- `EconomicAnalysisChart.tsx` - Break-even and ROI charts
+- `RegionHeatMap.tsx` - Map view of regions with store density
+- `MelbourneRegionMap.tsx` - Interactive Melbourne region map
+
+**Enhanced Components:**
+- `InventoryTable.tsx` - Add "Via Hub" column, tier badges
+- `TransferForm.tsx` - Add multi-tier transfer support
+
+### Workflow: Creating a New Hub
+
+1. **Navigate** to `/hubs/expansion/planning`
+2. **Click** "Plan New Hub"
+3. **Select** target regions (multi-select from 7 defaults)
+4. **Choose** hub type (shipping company, restaurant, warehouse)
+5. **Enter** partner details (optional at planning stage)
+6. **Configure** economic parameters:
+   - Commission rate (default 5%)
+   - Monthly storage fee (default $200)
+   - Setup cost (default $5,000)
+7. **Preview** economics - system calculates:
+   - Stores in target regions
+   - Current monthly cost
+   - Projected cost with hub
+   - Monthly savings
+   - Break-even months
+   - 12-month ROI
+8. **Viability check**:
+   - ✅ Green: ≥3 stores, positive savings, ≤24mo break-even
+   - ⚠️ Yellow: Marginal economics, review needed
+   - ❌ Red: Not viable
+9. **Create** scenario for review
+10. **Approve** → Converts to operational hub
+11. **Migrate** stores to hub-based distribution
+
+### CSV Import Workflow
+
+**Import Existing Distributors:**
+```csv
+company_name,contact_person,phone,email,address,region,current_monthly_orders
+"ABC Grocery Store","John Smith","0412345678","john@abc.com","123 Main St","CBD",50
+```
+
+**Import Prospective Partners:**
+```csv
+company_name,contact_person,phone,email,address,region,business_type,estimated_capacity,interest_level
+"XYZ Shipping Co","Jane Doe","0498765432","jane@xyz.com","456 Hub Rd","North","Shipping Company",1000,"high"
+```
+
+**Process:**
+1. Upload CSV file
+2. System previews first 5 rows
+3. Confirm import
+4. System processes all rows
+5. Creates scenarios or flags for review
+6. Show summary: X created, Y duplicates, Z errors
+
+### Multi-Tier Stock Movements
+
+**Movement Types:**
+
+```typescript
+type MovementTier = 
+  | 'head_to_hub'     // Bulk shipment from HO to hub
+  | 'hub_to_store'    // Local delivery from hub to store
+  | 'head_to_store'   // Direct (legacy, before hubs)
+  | 'store_to_hub';   // Returns
+
+// Enhanced stock_movements record
+interface StockMovement {
+  // ... existing fields
+  movement_tier: MovementTier;
+  via_hub_id?: string;
+  is_bulk_shipment: boolean;
+  expected_delivery_date: string;
+}
+```
+
+**Restock Logic with Hubs:**
+
+```typescript
+// OLD: Direct from Head Office
+next_restock_date = last_restock_date + 21 days
+source = 'head_office'
+
+// NEW: Via Regional Hub (faster cycle)
+if (store.parent_location_id === hub_id) {
+  next_restock_date = last_restock_date + 7 days
+  source = hub_id
+  
+  // Hub itself restocks from Head Office every 21 days
+  hub.next_bulk_shipment = hub.last_shipment + 21 days
+}
 ```
 
 ---

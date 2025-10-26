@@ -1,0 +1,135 @@
+---
+/**
+ * Test Page: Hub Expansion Map
+ * Mockup demonstration of OpenStreetMap integration
+ */
+import MainLayout from '../../layouts/MainLayout.astro';
+import HubExpansionMap from '../../components/HubExpansionMap';
+import { mockStoresWithCoordinates, mockRegionalHubs } from '../../utils/mockHubData';
+---
+
+<MainLayout title="Hub Expansion Map - Test" currentPage="test">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="text-3xl font-bold text-gray-900">Hub Expansion Map</h1>
+      <p class="mt-2 text-sm text-gray-600">
+        Testing OpenStreetMap integration with Leaflet - Real Melbourne coordinates
+      </p>
+    </div>
+
+    <!-- Test Instructions -->
+    <div class="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <h2 class="text-lg font-semibold text-blue-900 mb-2">Test Instructions</h2>
+      <ul class="text-sm text-blue-800 space-y-1 list-disc list-inside">
+        <li>Map should center on Melbourne with 6 store markers (🏪) and 2 hub markers (🏭)</li>
+        <li>Click markers to view store/hub details in popups</li>
+        <li>Hub markers show 10km coverage circles</li>
+        <li>Store markers are color-coded: green (healthy), yellow (low), red (critical)</li>
+        <li>Use map controls (zoom, pan) to explore</li>
+        <li>Check legend for marker meanings</li>
+        <li>Verify mobile touch interactions work</li>
+      </ul>
+    </div>
+
+    <!-- Data Summary -->
+    <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <div class="text-sm font-medium text-gray-500">Total Stores</div>
+        <div class="mt-1 text-2xl font-bold text-gray-900">{mockStoresWithCoordinates.length}</div>
+        <div class="mt-1 text-xs text-gray-500">
+          Across {new Set(mockStoresWithCoordinates.map(s => s.region)).size} regions
+        </div>
+      </div>
+      
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <div class="text-sm font-medium text-gray-500">Active Hubs</div>
+        <div class="mt-1 text-2xl font-bold text-gray-900">{mockRegionalHubs.length}</div>
+        <div class="mt-1 text-xs text-gray-500">
+          Serving {mockRegionalHubs.reduce((sum, h) => sum + h.stores_served, 0)} stores
+        </div>
+      </div>
+      
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <div class="text-sm font-medium text-gray-500">Regions</div>
+        <div class="mt-1 text-2xl font-bold text-gray-900">
+          {new Set(mockStoresWithCoordinates.map(s => s.region)).size}
+        </div>
+        <div class="mt-1 text-xs text-gray-500">
+          {Array.from(new Set(mockStoresWithCoordinates.map(s => s.region))).join(', ')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Map Component -->
+    <div class="bg-white border border-gray-200 rounded-lg p-6">
+      <HubExpansionMap
+        client:load
+        stores={mockStoresWithCoordinates}
+        hubs={mockRegionalHubs}
+        selectedRegion={null}
+      />
+    </div>
+
+    <!-- Technical Details -->
+    <div class="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
+      <h2 class="text-lg font-semibold text-gray-900 mb-2">Technical Implementation</h2>
+      <div class="text-sm text-gray-700 space-y-2">
+        <div>
+          <strong>Map Library:</strong> Leaflet 1.9.4 with dynamic import for SSR compatibility
+        </div>
+        <div>
+          <strong>Tile Provider:</strong> OpenStreetMap (no API key required)
+        </div>
+        <div>
+          <strong>Tile Server:</strong> https://tile.openstreetmap.org/&#123;z&#125;/&#123;x&#125;/&#123;y&#125;.png
+        </div>
+        <div>
+          <strong>Attribution:</strong> © OpenStreetMap contributors
+        </div>
+        <div>
+          <strong>Geocoding:</strong> Coordinates manually set for testing (real addresses in database)
+        </div>
+        <div>
+          <strong>Store Data:</strong> 6 stores across CBD, Northern, Eastern, Bayside, Western regions
+        </div>
+        <div>
+          <strong>Hub Data:</strong> 2 hubs (Brunswick logistics center, Box Hill restaurant)
+        </div>
+      </div>
+    </div>
+
+    <!-- Coordinate Reference -->
+    <div class="mt-6">
+      <details class="bg-white border border-gray-200 rounded-lg p-4">
+        <summary class="cursor-pointer font-semibold text-gray-900">
+          View Store Coordinates (for verification)
+        </summary>
+        <div class="mt-4 overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Store</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Region</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Postcode</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Latitude</th>
+                <th class="px-3 py-2 text-left font-medium text-gray-500">Longitude</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              {mockStoresWithCoordinates.map(store => (
+                <tr>
+                  <td class="px-3 py-2 text-gray-900">{store.name}</td>
+                  <td class="px-3 py-2 text-gray-600">{store.region}</td>
+                  <td class="px-3 py-2 text-gray-600">{store.postal_code}</td>
+                  <td class="px-3 py-2 font-mono text-gray-900">{store.latitude}</td>
+                  <td class="px-3 py-2 font-mono text-gray-900">{store.longitude}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  </div>
+</MainLayout>
