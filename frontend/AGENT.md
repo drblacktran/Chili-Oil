@@ -1654,7 +1654,58 @@ npm run preview
    - Background sync
    - Conflict resolution
 
-**Phase 2: Store Manager Portal**
+**Phase 2: Hub Expansion System (In Progress)**
+
+✅ Completed:
+- Database schema with 4 new tables (custom_regions, regional_hubs, hub_expansion_scenarios, hub_csv_imports)
+- Interactive map component with OpenStreetMap/Leaflet
+- Distributors page (`/distributors`) with hub visualization
+- Activity logs page (`/logs`) replacing SMS logs concept
+- Hub economics calculator with ROI analysis
+- 7 default Melbourne regions with postcode mappings
+- Mock data for stores, hubs, and system logs
+- Comprehensive documentation (OPENSTREETMAP_INTEGRATION.md, HUB_EXPANSION_IMPLEMENTATION.md)
+
+⏳ Pending (Ready to Build):
+1. **Hub Scenario Planning Components**
+   - [ ] HubScenarioCard.tsx - Display scenario with economic metrics
+   - [ ] CreateHubScenarioModal.tsx - Form with real-time economic preview
+   - [ ] `/hubs/expansion/planning` page - Main scenario planning dashboard
+   - [ ] Economic calculator integration in UI
+
+2. **CSV Import Wizard**
+   - [ ] CSVImportWizard.tsx - Multi-step import workflow
+   - [ ] CSV validation logic (headers, data types, required fields)
+   - [ ] Preview table before import
+   - [ ] Error handling and row-level validation feedback
+   - [ ] Success confirmation with imported data summary
+
+3. **Region Management**
+   - [ ] `/settings/regions` page - View and manage regions
+   - [ ] Custom region creation modal
+   - [ ] Postcode assignment interface
+   - [ ] Region priority editing
+   - [ ] Visual region boundaries on map (future: GeoJSON)
+
+4. **Geocoding Implementation**
+   - [ ] Batch geocoding script for existing stores
+   - [ ] Address → coordinates conversion via Nominatim API
+   - [ ] Rate limiting (1 req/sec) with progress tracking
+   - [ ] Store coordinates in database
+   - [ ] Manual override for failed geocodes
+
+🔄 Backend Integration Required:
+- [ ] `GET /api/stores/locations` - Stores with coordinates
+- [ ] `GET /api/hubs/with-coverage` - Hubs with coverage areas
+- [ ] `POST /api/hubs/scenarios` - Create expansion scenario
+- [ ] `PUT /api/hubs/scenarios/:id` - Update scenario
+- [ ] `POST /api/hubs/scenarios/:id/calculate` - Run economics
+- [ ] `GET /api/logs` - System activity logs with filters
+- [ ] `POST /api/hubs/csv-import` - Bulk import distributors
+- [ ] `GET /api/regions` - Custom regions list
+- [ ] `POST /api/regions` - Create custom region
+
+**Phase 2B: Store Manager Portal**
 
 1. Authentication System
    - Login/logout flow
