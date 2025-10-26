@@ -173,7 +173,6 @@ export default function TransferForm({ inventoryItems, headOffice, stores }: Tra
                 Product
               </label>
               <div className="flex items-center space-x-3 px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg">
-                <span className="text-2xl">🌶️</span>
                 <div className="flex-1">
                   <p className="font-semibold text-gray-900">Benjamin's Chili Oil</p>
                   <p className="text-xs text-gray-500">SKU: BK-CHILI-RETAIL</p>
@@ -251,7 +250,7 @@ export default function TransferForm({ inventoryItems, headOffice, stores }: Tra
                       : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                   }`}
                 >
-                  📅 Scheduled
+                  Scheduled
                 </button>
                 <button
                   type="button"
@@ -262,7 +261,7 @@ export default function TransferForm({ inventoryItems, headOffice, stores }: Tra
                       : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                   }`}
                 >
-                  🚨 Emergency
+                  Emergency
                 </button>
                 <button
                   type="button"
@@ -273,7 +272,7 @@ export default function TransferForm({ inventoryItems, headOffice, stores }: Tra
                       : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                   }`}
                 >
-                  📝 Adjustment
+                  Adjustment
                 </button>
               </div>
             </div>
@@ -330,7 +329,7 @@ export default function TransferForm({ inventoryItems, headOffice, stores }: Tra
       <div className="lg:col-span-1">
         <div className="bg-white rounded-lg shadow border border-gray-200 p-6 sticky top-6">
           <h3 className="text-sm font-bold text-gray-900 mb-4">
-            📊 Transfer Summary
+            Transfer Summary
           </h3>
 
           {toInventory ? (
@@ -404,7 +403,7 @@ export default function TransferForm({ inventoryItems, headOffice, stores }: Tra
                   {/* Warnings */}
                   {toStockAfter > toInventory.maximum_stock && (
                     <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-3">
-                      <p className="text-xs font-semibold text-yellow-800">⚠️ Warning</p>
+                      <p className="text-xs font-semibold text-yellow-800">Warning</p>
                       <p className="text-xs text-yellow-700 mt-1">
                         Transfer will exceed maximum capacity by {toStockAfter - toInventory.maximum_stock} units
                       </p>
@@ -413,7 +412,7 @@ export default function TransferForm({ inventoryItems, headOffice, stores }: Tra
 
                   {fromStockAfter < 0 && (
                     <div className="bg-red-50 border border-red-300 rounded-lg p-3">
-                      <p className="text-xs font-semibold text-red-800">🚨 Error</p>
+                      <p className="text-xs font-semibold text-red-800">Error</p>
                       <p className="text-xs text-red-700 mt-1">
                         Insufficient stock at source location
                       </p>
@@ -425,7 +424,7 @@ export default function TransferForm({ inventoryItems, headOffice, stores }: Tra
               {/* Suggestion Reasoning */}
               {suggestedQuantity > 0 && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <p className="text-xs font-semibold text-blue-800 mb-1">💡 Suggestion</p>
+                  <p className="text-xs font-semibold text-blue-800 mb-1">Suggestion</p>
                   <p className="text-sm font-bold text-blue-900">{suggestedQuantity} units</p>
                   <p className="text-xs text-blue-700 mt-2">
                     Based on:
@@ -439,7 +438,6 @@ export default function TransferForm({ inventoryItems, headOffice, stores }: Tra
             </div>
           ) : (
             <div className="text-center py-8">
-              <span className="text-4xl">📍</span>
               <p className="text-sm text-gray-500 mt-2">
                 Select a destination store to see details
               </p>

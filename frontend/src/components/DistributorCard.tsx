@@ -16,28 +16,28 @@ export default function DistributorCard({ distributor, onClick }: DistributorCar
       bgColor: 'bg-green-50',
       textColor: 'text-green-700',
       iconColor: 'text-green-500',
-      icon: '✅',
+      icon: '',
     },
     low_stock: {
       label: 'Low Stock',
       bgColor: 'bg-yellow-50',
       textColor: 'text-yellow-700',
       iconColor: 'text-yellow-500',
-      icon: '⚠️',
+      icon: '',
     },
     critical: {
       label: 'Critical',
       bgColor: 'bg-red-50',
       textColor: 'text-red-700',
       iconColor: 'text-red-500',
-      icon: '🚨',
+      icon: '',
     },
     inactive: {
       label: 'Inactive',
       bgColor: 'bg-gray-50',
       textColor: 'text-gray-700',
       iconColor: 'text-gray-500',
-      icon: '⭕',
+      icon: '',
     },
   };
 
@@ -70,7 +70,6 @@ export default function DistributorCard({ distributor, onClick }: DistributorCar
 
       {/* Location */}
       <div className="flex items-center text-xs text-gray-600 mb-3">
-        <span className="mr-1">📍</span>
         <span>{distributor.city}, {distributor.state}</span>
       </div>
 

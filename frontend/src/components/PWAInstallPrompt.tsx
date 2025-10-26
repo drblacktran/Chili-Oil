@@ -81,9 +81,6 @@ export default function PWAInstallPrompt() {
         <div className="px-6 py-4 border-b border-red-500/30">
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-2xl">
-                🌶️
-              </div>
               <div>
                 <h3 className="font-bold text-lg">Install Benjamin's Chili</h3>
                 <p className="text-sm text-red-100">Quick access from your home screen</p>
@@ -125,7 +122,7 @@ export default function PWAInstallPrompt() {
               onClick={handleInstallClick}
               className="flex-1 px-4 py-3 bg-white text-red-700 font-bold rounded-lg hover:bg-red-50 transition-colors shadow-md"
             >
-              📲 Install App
+              Install App
             </button>
             <button
               onClick={handleDismiss}

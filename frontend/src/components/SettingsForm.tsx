@@ -12,10 +12,7 @@ import {
   type AppConfig,
 } from '../utils/appConfig';
 
-const commonEmojis = [
-  '🌶️', '🍽️', '🥤', '📦', '🍜', '🥘', '🍛', '🥫',
-  '🧂', '🧄', '🫗', '🍶', '🥡', '🍱', '🥢', '🔥'
-];
+const commonEmojis: string[] = [];
 
 export default function SettingsForm() {
   const [config, setConfig] = useState<AppConfig>(getAppConfig());
@@ -61,7 +58,6 @@ export default function SettingsForm() {
       {/* Success Message */}
       {showSuccess && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center space-x-3">
-          <span className="text-2xl">✅</span>
           <div>
             <p className="font-semibold text-green-900">Settings saved!</p>
             <p className="text-sm text-green-700">Refreshing page to apply changes...</p>
@@ -72,7 +68,7 @@ export default function SettingsForm() {
       {/* Business Templates */}
       <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
         <h3 className="text-lg font-bold text-gray-900 mb-4">
-          🎨 Quick Templates
+          Quick Templates
         </h3>
         <p className="text-sm text-gray-600 mb-4">
           Choose a template to quickly configure your app for a specific business type
@@ -99,7 +95,7 @@ export default function SettingsForm() {
       {/* Business Information */}
       <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
         <h3 className="text-lg font-bold text-gray-900 mb-4">
-          🏢 Business Information
+          Business Information
         </h3>
         <div className="space-y-4">
           <div>
@@ -139,7 +135,7 @@ export default function SettingsForm() {
       {/* Theme Customization */}
       <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
         <h3 className="text-lg font-bold text-gray-900 mb-4">
-          🎨 Theme & Branding
+          Theme & Branding
         </h3>
 
         {/* Logo Selection */}
@@ -215,7 +211,7 @@ export default function SettingsForm() {
       {/* Regional Settings */}
       <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
         <h3 className="text-lg font-bold text-gray-900 mb-4">
-          🌏 Regional Settings
+          Regional Settings
         </h3>
         <div className="grid grid-cols-3 gap-4">
           <div>
@@ -275,7 +271,7 @@ export default function SettingsForm() {
       {/* Preview */}
       <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
         <h3 className="text-lg font-bold text-gray-900 mb-4">
-          👁️ Preview
+          Preview
         </h3>
         <div className="bg-gray-50 rounded-lg p-6 border-2 border-gray-200">
           <div className="flex items-center space-x-3 mb-4">

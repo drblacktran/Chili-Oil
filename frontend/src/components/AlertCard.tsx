@@ -15,21 +15,21 @@ export default function AlertCard({ alert, onAction }: AlertCardProps) {
       bgColor: 'bg-red-50',
       borderColor: 'border-red-200',
       textColor: 'text-red-700',
-      icon: '🚨',
+      icon: '',
       badgeColor: 'bg-red-100 text-red-800',
     },
     warning: {
       bgColor: 'bg-yellow-50',
       borderColor: 'border-yellow-200',
       textColor: 'text-yellow-700',
-      icon: '⚠️',
+      icon: '',
       badgeColor: 'bg-yellow-100 text-yellow-800',
     },
     info: {
       bgColor: 'bg-blue-50',
       borderColor: 'border-blue-200',
       textColor: 'text-blue-700',
-      icon: 'ℹ️',
+      icon: '',
       badgeColor: 'bg-blue-100 text-blue-800',
     },
   };
@@ -68,7 +68,6 @@ export default function AlertCard({ alert, onAction }: AlertCardProps) {
 
           {/* Location */}
           <div className="flex items-center text-xs text-gray-700 mb-2">
-            <span className="mr-1">📍</span>
             <span className="font-medium">
               {alert.locationName} ({alert.locationCode})
             </span>

@@ -88,7 +88,7 @@ export default function BatchUpdateModal({
           {/* Header */}
           <div className="bg-blue-600 text-white px-6 py-4 rounded-t-lg">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">📦 Batch Stock Update</h2>
+              <h2 className="text-xl font-bold">Batch Stock Update</h2>
               <button
                 onClick={handleClose}
                 className="text-white hover:text-gray-200 text-2xl leading-none"
@@ -210,7 +210,7 @@ export default function BatchUpdateModal({
             {/* Impact Preview */}
             <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h3 className="text-sm font-bold text-blue-900 mb-3">
-                📊 Impact Preview
+                Impact Preview
               </h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>

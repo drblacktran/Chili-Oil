@@ -20,7 +20,7 @@ const defaultConfig: AppConfig = {
   businessShortName: "Benjamin's",
   primaryColor: '#DC2626', // red-600
   secondaryColor: '#991B1B', // red-800
-  logo: '🌶️',
+  logo: '',
   currency: 'AUD',
   locale: 'en-AU',
   timezone: 'Australia/Melbourne',
@@ -93,24 +93,24 @@ export const businessTemplates = {
     businessName: "Benjamin's Chili Oil Distribution",
     businessShortName: "Benjamin's",
     primaryColor: '#DC2626',
-    logo: '🌶️',
+    logo: '',
   },
   'food-distribution': {
     businessName: 'Food Distribution Co.',
     businessShortName: 'Food Co.',
     primaryColor: '#16A34A',
-    logo: '🍽️',
+    logo: '',
   },
   'beverage': {
     businessName: 'Beverage Distribution',
     businessShortName: 'Beverages',
     primaryColor: '#2563EB',
-    logo: '🥤',
+    logo: '',
   },
   'general': {
     businessName: 'Distribution Management',
     businessShortName: 'DMS',
     primaryColor: '#6B7280',
-    logo: '📦',
+    logo: '',
   },
 };

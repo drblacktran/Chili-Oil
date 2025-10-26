@@ -26,7 +26,9 @@
       "Bash(npm install:*)",
       "Bash(git rev-parse:*)",
       "Bash(chmod:*)",
-      "Bash(./.githooks/pre-commit:*)"
+      "Bash(./.githooks/pre-commit:*)",
+      "Bash(cat:*)",
+      "Bash(git check-ignore:*)"
     ],
     "deny": [],
     "ask": []

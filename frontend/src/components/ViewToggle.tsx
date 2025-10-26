@@ -19,7 +19,6 @@ export default function ViewToggle({ view, onChange }: ViewToggleProps) {
             : 'text-gray-600 hover:text-gray-900'
         }`}
       >
-        <span className="mr-2">📊</span>
         Grid View
       </button>
       <button
@@ -30,7 +29,6 @@ export default function ViewToggle({ view, onChange }: ViewToggleProps) {
             : 'text-gray-600 hover:text-gray-900'
         }`}
       >
-        <span className="mr-2">🗺️</span>
         Map View
       </button>
     </div>

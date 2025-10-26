@@ -22,19 +22,19 @@ export default function AlertApprovalList({ pendingAlerts }: AlertApprovalListPr
       case 'urgent':
         return (
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800 border border-red-300">
-            🚨 URGENT
+            URGENT
           </span>
         );
       case 'high':
         return (
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-800 border border-yellow-300">
-            ⚠️ HIGH
+            HIGH
           </span>
         );
       case 'normal':
         return (
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-300">
-            🔔 NORMAL
+            NORMAL
           </span>
         );
       default:
@@ -197,7 +197,7 @@ export default function AlertApprovalList({ pendingAlerts }: AlertApprovalListPr
               onClick={handleBulkApprove}
               className="px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-colors"
             >
-              ✓ Approve All
+              Approve All
             </button>
             <button
               onClick={() => setSelectedIds(new Set())}
@@ -267,7 +267,7 @@ export default function AlertApprovalList({ pendingAlerts }: AlertApprovalListPr
                 {/* Recipient Info */}
                 <div className="md:col-span-1">
                   <h4 className="text-sm font-bold text-gray-900 mb-3">
-                    📞 Recipient
+                    Recipient
                   </h4>
                   <div className="space-y-2 text-sm">
                     <div>
@@ -294,7 +294,7 @@ export default function AlertApprovalList({ pendingAlerts }: AlertApprovalListPr
                   {alert.context_data && (
                     <div className="mt-4 pt-4 border-t border-gray-200">
                       <h4 className="text-sm font-bold text-gray-900 mb-2">
-                        📊 Context
+                        Context
                       </h4>
                       <div className="space-y-1 text-xs">
                         {alert.context_data.current_stock !== undefined && (
@@ -325,7 +325,7 @@ export default function AlertApprovalList({ pendingAlerts }: AlertApprovalListPr
                 {/* Message Preview */}
                 <div className="md:col-span-2">
                   <h4 className="text-sm font-bold text-gray-900 mb-3">
-                    💬 SMS Message Preview
+                    SMS Message Preview
                   </h4>
 
                   {editingId === alert.id ? (
@@ -374,7 +374,7 @@ export default function AlertApprovalList({ pendingAlerts }: AlertApprovalListPr
                               onClick={() => handleEdit(alert.id)}
                               className="text-xs text-blue-600 hover:text-blue-700 font-semibold"
                             >
-                              ✏️ Edit
+                              Edit
                             </button>
                           </div>
                         </div>
@@ -388,19 +388,19 @@ export default function AlertApprovalList({ pendingAlerts }: AlertApprovalListPr
                       onClick={() => handleReject(alert.id)}
                       className="px-4 py-2 border border-red-300 text-red-700 font-semibold rounded-lg hover:bg-red-50 transition-colors text-sm"
                     >
-                      ✗ Reject
+                      Reject
                     </button>
                     <button
                       onClick={() => handleSchedule(alert.id)}
                       className="px-4 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors text-sm"
                     >
-                      ⏰ Schedule
+                      Schedule
                     </button>
                     <button
                       onClick={() => handleApprove(alert.id)}
                       className="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors shadow-md text-sm"
                     >
-                      ✓ Approve & Send
+                      Approve & Send
                     </button>
                   </div>
                 </div>
@@ -413,7 +413,6 @@ export default function AlertApprovalList({ pendingAlerts }: AlertApprovalListPr
       {/* Empty State */}
       {alerts.length === 0 && (
         <div className="bg-white rounded-lg shadow border border-gray-200 p-12 text-center">
-          <span className="text-6xl">✅</span>
           <h2 className="text-2xl font-bold text-gray-900 mt-4 mb-2">
             All Caught Up!
           </h2>

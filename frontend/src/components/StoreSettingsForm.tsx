@@ -103,7 +103,6 @@ export default function StoreSettingsForm({ store, inventoryItem }: StoreSetting
       {/* Restock Settings Section */}
       <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
         <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
-          <span className="text-2xl mr-2">📅</span>
           Restock Settings
         </h2>
 
@@ -187,7 +186,6 @@ export default function StoreSettingsForm({ store, inventoryItem }: StoreSetting
       {/* Sales Velocity Section */}
       <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
         <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
-          <span className="text-2xl mr-2">📊</span>
           Sales Velocity
         </h2>
 
@@ -228,7 +226,6 @@ export default function StoreSettingsForm({ store, inventoryItem }: StoreSetting
       {/* Delivery Preferences Section */}
       <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
         <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
-          <span className="text-2xl mr-2">🚚</span>
           Delivery Preferences
         </h2>
 
@@ -275,7 +272,6 @@ export default function StoreSettingsForm({ store, inventoryItem }: StoreSetting
       {/* Seasonal Adjustments Section */}
       <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
         <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
-          <span className="text-2xl mr-2">🌟</span>
           Seasonal Adjustments
         </h2>
 
@@ -318,7 +314,6 @@ export default function StoreSettingsForm({ store, inventoryItem }: StoreSetting
       {/* Notifications Section */}
       <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
         <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
-          <span className="text-2xl mr-2">🔔</span>
           Notification Settings
         </h2>
 
@@ -367,7 +362,6 @@ export default function StoreSettingsForm({ store, inventoryItem }: StoreSetting
       {/* Contact Information Section */}
       <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
         <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
-          <span className="text-2xl mr-2">📞</span>
           Contact Information
         </h2>
 
@@ -417,7 +411,7 @@ export default function StoreSettingsForm({ store, inventoryItem }: StoreSetting
         <div>
           {hasChanges && (
             <p className="text-sm text-yellow-700 font-semibold">
-              ⚠️ You have unsaved changes
+              You have unsaved changes
             </p>
           )}
         </div>
@@ -435,7 +429,7 @@ export default function StoreSettingsForm({ store, inventoryItem }: StoreSetting
             disabled={!hasChanges}
             className="px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            💾 Save Settings
+            Save Settings
           </button>
         </div>
       </div>

@@ -21,10 +21,10 @@ const spiceLevelColors = {
 
 const spiceLevelLabels = {
   none: 'No Spice',
-  mild: '🌶️ Mild',
-  medium: '🌶️🌶️ Medium',
-  hot: '🌶️🌶️🌶️ Hot',
-  extra_hot: '🌶️🌶️🌶️🌶️ Extra Hot',
+  mild: 'Mild',
+  medium: 'Medium',
+  hot: 'Hot',
+  extra_hot: 'Extra Hot',
 };
 
 export default function ProductCard({ product, onEdit, onDelete }: ProductCardProps) {
@@ -60,15 +60,6 @@ export default function ProductCard({ product, onEdit, onDelete }: ProductCardPr
           />
         ) : (
           <div className="text-center">
-            <span className="text-6xl mb-2 block">
-              {product.category === 'Chili Oil' && '🌶️'}
-              {product.category === 'Sauce' && '🥫'}
-              {product.category === 'Condiment' && '🧄'}
-              {product.category === 'Seasoning' && '✨'}
-              {product.category === 'Oil' && '🫗'}
-              {product.category === 'Vinegar' && '🍶'}
-              {product.category === 'Other' && '📦'}
-            </span>
             <p className="text-xs text-gray-500">No image</p>
           </div>
         )}
@@ -77,7 +68,7 @@ export default function ProductCard({ product, onEdit, onDelete }: ProductCardPr
         <div className="absolute top-2 left-2 flex flex-col space-y-1">
           {product.isFeatured && (
             <span className="px-2 py-1 bg-yellow-500 text-white text-xs font-bold rounded">
-              ⭐ Featured
+              Featured
             </span>
           )}
           {product.status === 'inactive' && (
@@ -168,7 +159,7 @@ export default function ProductCard({ product, onEdit, onDelete }: ProductCardPr
             onClick={onEdit}
             className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 text-sm font-semibold rounded hover:bg-gray-200 transition-colors"
           >
-            ✏️ Edit
+            Edit
           </button>
           <button
             onClick={() => {
@@ -178,7 +169,7 @@ export default function ProductCard({ product, onEdit, onDelete }: ProductCardPr
             }}
             className="px-3 py-2 bg-red-50 text-red-600 text-sm font-semibold rounded hover:bg-red-100 transition-colors"
           >
-            🗑️
+            Delete
           </button>
         </div>
       </div>

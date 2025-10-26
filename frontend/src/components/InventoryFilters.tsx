@@ -38,7 +38,7 @@ export default function InventoryFilters({ onFilterChange, regions }: InventoryF
     <div className="bg-white rounded-lg shadow border border-gray-200 p-4 mb-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-bold text-gray-900">
-          🔍 Filters
+          Filters
         </h3>
         {hasActiveFilters && (
           <button
@@ -76,10 +76,10 @@ export default function InventoryFilters({ onFilterChange, regions }: InventoryF
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
           >
             <option value="">All Statuses</option>
-            <option value="critical">🚨 Critical</option>
-            <option value="low">⚠️ Low</option>
-            <option value="healthy">✅ Healthy</option>
-            <option value="overstocked">📦 Overstocked</option>
+            <option value="critical">Critical</option>
+            <option value="low">Low</option>
+            <option value="healthy">Healthy</option>
+            <option value="overstocked">Overstocked</option>
           </select>
         </div>
 
@@ -113,8 +113,8 @@ export default function InventoryFilters({ onFilterChange, regions }: InventoryF
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
           >
             <option value="">All Stores</option>
-            <option value="true">🚚 Needs Restock</option>
-            <option value="false">✅ No Restock Needed</option>
+            <option value="true">Needs Restock</option>
+            <option value="false">No Restock Needed</option>
           </select>
         </div>
       </div>

@@ -25,19 +25,19 @@ const distributorStatusData = [
     label: 'Healthy',
     value: mockDistributors.filter(d => d.status === 'healthy').length,
     color: '#16A34A',
-    icon: '✅'
+    icon: ''
   },
   {
     label: 'Low Stock',
     value: mockDistributors.filter(d => d.status === 'low_stock').length,
     color: '#EAB308',
-    icon: '⚠️'
+    icon: ''
   },
   {
     label: 'Critical',
     value: mockDistributors.filter(d => d.status === 'critical').length,
     color: '#DC2626',
-    icon: '🚨'
+    icon: ''
   },
 ];
 
@@ -46,37 +46,37 @@ const regionDistributionData = [
     label: 'CBD',
     value: mockDistributors.filter(d => d.region === 'CBD').length,
     color: '#DC2626',
-    icon: '🏙️'
+    icon: ''
   },
   {
     label: 'North',
     value: mockDistributors.filter(d => d.region === 'North').length,
     color: '#2563EB',
-    icon: '⬆️'
+    icon: ''
   },
   {
     label: 'South',
     value: mockDistributors.filter(d => d.region === 'South').length,
     color: '#16A34A',
-    icon: '⬇️'
+    icon: ''
   },
   {
     label: 'East',
     value: mockDistributors.filter(d => d.region === 'East').length,
     color: '#9333EA',
-    icon: '➡️'
+    icon: ''
   },
   {
     label: 'West',
     value: mockDistributors.filter(d => d.region === 'West').length,
     color: '#EA580C',
-    icon: '⬅️'
+    icon: ''
   },
   {
     label: 'South East',
     value: mockDistributors.filter(d => d.region === 'South East').length,
     color: '#CA8A04',
-    icon: '↘️'
+    icon: ''
   },
 ];
 
@@ -104,7 +104,7 @@ const today = new Date().toLocaleDateString('en-MY', {
   <!-- Welcome Header -->
   <div class="mb-8">
     <h2 class="text-2xl font-bold text-gray-900 mb-1">
-      {greeting}, Tien 👋
+      {greeting}, Tien
     </h2>
     <p class="text-sm text-gray-600">
       {today} • Here's what's happening with your distribution network
@@ -115,7 +115,7 @@ const today = new Date().toLocaleDateString('en-MY', {
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
     <StatCard
       client:load
-      icon="📦"
+      icon=""
       label="Total Inventory"
       value={mockDashboardStats.totalInventory}
       subtext="Across all locations"
@@ -124,7 +124,7 @@ const today = new Date().toLocaleDateString('en-MY', {
 
     <StatCard
       client:load
-      icon="👥"
+      icon=""
       label="Active Distributors"
       value={`${mockDashboardStats.activeDistributors}/${mockDashboardStats.totalDistributors}`}
       subtext="All systems operational"
@@ -133,7 +133,7 @@ const today = new Date().toLocaleDateString('en-MY', {
 
     <StatCard
       client:load
-      icon="⚠️"
+      icon=""
       label="Low Stock Alerts"
       value={mockDashboardStats.lowStockAlerts}
       subtext="Requires attention"
@@ -142,7 +142,7 @@ const today = new Date().toLocaleDateString('en-MY', {
 
     <StatCard
       client:load
-      icon="🚚"
+      icon=""
       label="Pending Transfers"
       value={mockDashboardStats.pendingTransfers}
       subtext="Awaiting processing"
@@ -201,7 +201,7 @@ const today = new Date().toLocaleDateString('en-MY', {
     <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-sm font-bold text-gray-900">
-          ⚠️ Critical Low Stock Alerts
+          Critical Low Stock Alerts
         </h3>
         <a
           href="/inventory/low-stock"
@@ -231,7 +231,7 @@ const today = new Date().toLocaleDateString('en-MY', {
   <div class="mb-8">
     <div class="flex items-center justify-between mb-4">
       <h3 class="text-xl font-bold text-gray-900">
-        📍 Distributor Network
+        Distributor Network
       </h3>
       <a
         href="/distributors"
@@ -266,7 +266,7 @@ const today = new Date().toLocaleDateString('en-MY', {
   <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
     <div class="flex items-center justify-between mb-4">
       <h3 class="text-lg font-bold text-gray-900">
-        🕒 Recent Activity
+        Recent Activity
       </h3>
       <a href="/activity" class="text-sm text-red-600 hover:text-red-700 font-semibold">
         View All →
@@ -276,12 +276,6 @@ const today = new Date().toLocaleDateString('en-MY', {
     <div class="space-y-3">
       {mockRecentActivity.slice(0, 5).map((activity) => (
         <div class="flex items-center space-x-3 pb-3 border-b border-gray-100 last:border-0">
-          <span class="text-xl flex-shrink-0">
-            {activity.type === 'transfer' && '🚚'}
-            {activity.type === 'sms' && '📱'}
-            {activity.type === 'product' && '📦'}
-            {activity.type === 'adjustment' && '📝'}
-          </span>
           <div class="flex-1 min-w-0">
             <p class="text-sm text-gray-900">{activity.description}</p>
             <p class="text-xs text-gray-500">{new Date(activity.timestamp).toLocaleString()}</p>
