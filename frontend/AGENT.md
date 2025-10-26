@@ -12,33 +12,32 @@ This is a web-based inventory and distribution management system for Benjamin's 
 
 ### Business Model
 
-- **Company:** Benjamin's Chili Oil
 - **Type:** Manufacturer to Retail Stores Distribution
-- **Product:** Benjamin's Chili Oil (retail)
 - **Primary Market:** Melbourne, Victoria, Australia
 - **Expansion Plan:** Australia-wide
-- **Head Office:** Benjamin's Kitchen, 758 Heidelberg Road Alphington VIC 3078
-- **Current Stores:** 10 retail locations across Melbourne:
-  1. Benjamin's Kitchen (Head Office) - Alphington VIC 3078
-  2. Greenmart - Camberwell VIC 3124
-  3. Chat Phat Supermarket - Richmond VIC 3121
-  4. Minh Phat Supermarket - Abbotsford VIC 3067
-  5. Circle G Richmond Supermarket - Richmond VIC 3121
-  6. Son Butcher & Frozen Seafood - Richmond VIC 3121
-  7. Fu Lin Asian Grocery Supermarket - Camberwell VIC 3124
-  8. Hokkien Market - Burwood East VIC 3151
-  9. Oasis - Fairfield VIC 3078
-  10. Talad Thai Melbourne - Abbotsford VIC 3067
+- **Current Stores:** 10 retail locations across Melbourne (see business.config.local.ts)
 
-### Contact Persons
+### Business Configuration
 
-New, Bill, Victor, Kim, Harry, My, Richard, Ming, George, Lisa
+Sensitive business information is stored in `business.config.local.ts` (gitignored):
+- Company details and contact information
+- Store locations and contact persons
+- Pricing and commission rates
+- Profit margins
+- Restock cycle parameters
 
-### Business Parameters
+**Setup:**
+```bash
+# Copy template and configure
+cp business.config.example.ts business.config.local.ts
+# Edit with actual values (file is gitignored)
+```
 
-- **Pricing Model:** Commission-based retail (80% retail purchase commission)
-- **Restock Cycle:** 21-day automatic restock calculation
-- **Stock Tracking:** Current stock (10-40 units), minimum stock threshold (10-30 units), unit cost, retail price
+### General Parameters
+
+- **Pricing Model:** Commission-based retail
+- **Restock Cycle:** Configurable per store (default: 21 days)
+- **Stock Tracking:** Current stock, minimum/maximum thresholds
 - **Currency:** AUD (Australian Dollars)
 - **Phone Format:** Australian (+61 or 04xx xxx xxx)
 
@@ -551,7 +550,9 @@ CREATE INDEX idx_sms_logs_sent_at ON sms_logs(sent_at);
 
 ### Sample Data Initialization
 
-**Insert Benjamin's Chili Oil:**
+**Note:** Actual business data (products, locations, pricing) should be loaded from `business.config.local.ts`.
+
+**Example Product Structure:**
 
 ```sql
 INSERT INTO products (
@@ -562,18 +563,18 @@ INSERT INTO products (
   default_minimum_stock, default_maximum_stock, default_restock_cycle_days,
   is_active, is_featured
 ) VALUES (
-  'BK-CHILI-RETAIL',
-  'Benjamin''s Chili Oil',
-  'Premium handcrafted chili oil, perfect for any dish',
-  12.80, 4.50,
-  30.00, 30.00,
+  'SKU-CODE',
+  'Product Name',
+  'Product description',
+  0.00, 0.00,  -- Use actual values from config
+  0.00, 0.00,  -- Commission rates from config
   'AUD',
   30, 50, 21,
   true, true
 );
 ```
 
-**Insert Head Office:**
+**Example Location Structure:**
 
 ```sql
 INSERT INTO locations (
@@ -584,10 +585,10 @@ INSERT INTO locations (
   restock_cycle_days, minimum_stock_level, maximum_stock_level,
   status
 ) VALUES (
-  'Benjamin''s Kitchen', 'head_office', 'HQ001',
-  'Tien Tran', 'tien@benjamins.com.au', '0466891665',
-  '758 Heidelberg Road', 'Alphington', 'Victoria', '3078', 'Australia',
-  -37.7851, 145.0307, 'North East',
+  'Location Name', 'head_office', 'CODE',
+  'Contact Person', 'email@example.com', '04XXXXXXXX',
+  'Address Line 1', 'City', 'State', '0000', 'Australia',
+  0.0000, 0.0000, 'Region',
   21, 100, 500,
   'active'
 );
@@ -1325,11 +1326,12 @@ GREATEST(
 
 **Total Profit Potential:** `current_stock * profit_per_unit`
 
-**Example:**
-- Retail Price: $12.80 AUD
-- Commission Rate: 30%
-- Unit Cost: $4.50 AUD
-- Profit: $12.80 * 0.70 - $4.50 = $4.46 per unit
+**Formula:**
+```
+Profit = (Retail Price × (1 - Commission %)) - Unit Cost
+```
+
+Actual values are configured in `business.config.local.ts`.
 
 ---
 
@@ -1508,15 +1510,10 @@ npm run build -- --verbose
 
 ---
 
-## Contact
-
-**Project Owner:** Tien Tran
-**Email:** tgtien286@gmail.com
-**Phone:** 0466891665
-**Business:** Benjamin's Kitchen, 758 Heidelberg Road Alphington VIC 3078
-
 ---
 
 **End of Frontend Development Guide**
 
 This document is the single source of truth for frontend development. All subfolder AGENT.md files are now deprecated and consolidated here.
+
+**Note:** Business-specific information (company details, pricing, store locations, contacts) is stored in `business.config.local.ts` which is gitignored for security. See `business.config.example.ts` for configuration structure.

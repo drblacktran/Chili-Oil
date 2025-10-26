@@ -111,6 +111,12 @@ $RECYCLE.BIN/
 ~$*.xlsx
 ~$*.xls
 
+# Business configuration (confidential)
+business.config.local.ts
+business.config.local.js
+*.config.local.ts
+*.config.local.js
+
 # Temporary scripts
 read_excel.js
 package.json

@@ -2,9 +2,6 @@
 
 A web-based inventory and distribution management system for managing chili oil products across retail store locations in Melbourne, Australia.
 
-**Business:** Benjamin's Kitchen, 758 Heidelberg Road Alphington VIC 3078
-**Contact:** Tien Tran (tgtien286@gmail.com, 0466891665)
-
 ---
 
 ## Current Status
@@ -322,29 +319,27 @@ Backend deployment strategy will be determined during architecture planning phas
 
 ---
 
-## 10 Retail Store Locations (Melbourne)
+## Business Configuration
 
-1. **Benjamin's Kitchen** (Head Office) - Alphington VIC 3078
-2. **Greenmart** - Camberwell VIC 3124
-3. **Chat Phat Supermarket** - Richmond VIC 3121
-4. **Minh Phat Supermarket** - Abbotsford VIC 3067
-5. **Circle G Richmond Supermarket** - Richmond VIC 3121
-6. **Son Butcher & Frozen Seafood** - Richmond VIC 3121
-7. **Fu Lin Asian Grocery Supermarket** - Camberwell VIC 3124
-8. **Hokkien Market** - Burwood East VIC 3151
-9. **Oasis** - Fairfield VIC 3078
-10. **Talad Thai Melbourne** - Abbotsford VIC 3067
+Business-specific parameters (pricing, store locations, contacts, etc.) are stored in `business.config.local.ts` which is gitignored for security.
 
----
+**Setup:**
+```bash
+# Copy the template
+cp business.config.example.ts business.config.local.ts
 
-## Business Parameters
+# Edit with your actual values
+# This file is gitignored and will not be committed
+```
 
-- **Currency:** AUD (Australian Dollars)
-- **Restock Cycle:** 21 days (configurable per store)
-- **Commission Rate:** 30% (configurable)
-- **Retail Price:** $12.80 AUD (Benjamin's Chili Oil)
-- **Unit Cost:** $4.50 AUD
-- **Profit per Unit:** $4.46 AUD (after commission)
+The configuration includes:
+- Company information
+- Product pricing and profit margins
+- Inventory parameters (restock cycles, stock levels)
+- Store locations and contact details
+- Commission rates
+
+See `business.config.example.ts` for the structure.
 
 ---
 
@@ -441,13 +436,6 @@ MIT License
 
 ---
 
-## Contact
-
-**Project Owner:** Tien Tran
-**Email:** tgtien286@gmail.com
-**Phone:** 0466891665
-**Business:** Benjamin's Kitchen, 758 Heidelberg Road Alphington VIC 3078
-
----
-
 **Note:** Backend architecture is currently under consultation. This README focuses on the implemented frontend. Backend documentation will be added once architectural decisions are finalized.
+
+**Business Configuration:** Sensitive business information (pricing, contacts, locations) is stored in `business.config.local.ts` (gitignored). See `business.config.example.ts` for setup instructions.
