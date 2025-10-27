@@ -5,7 +5,7 @@
 
 ## 🎯 Schema Updates Summary
 
-**New Features Added**:
+**Phase 1 Features**:
 - Restock cycle management (per-store configurable)
 - Sales velocity tracking (average daily sales)
 - Day-of-week delivery preferences
@@ -15,6 +15,15 @@
 - Emergency restock alerts
 - Stock transfer audit trail
 - SMS alert approval queue
+
+**Phase 2 Features (Hub Expansion)**:
+- Multi-tier distribution (Head Office → Regional Hub → Store)
+- Regional hub management with partner types
+- Hub expansion scenario planning with economic analysis
+- Custom region management (hybrid: defaults + user-defined)
+- CSV import for distributors and prospective partners
+- Automated economic viability calculations
+- Multi-tier stock movement tracking
 
 ---
 
@@ -708,18 +717,591 @@ CHECK (
 
 ## 🎯 Next Steps
 
+### Phase 1 - Current System (Completed)
 1. ✅ Create this schema in PostgreSQL database
 2. ✅ Seed with Benjamin's Chili Oil product
 3. ✅ Seed with 10 Melbourne retail stores
 4. ✅ Initialize inventory for all stores
-5. Build API endpoints for CRUD operations
-6. Build frontend inventory management UI
-7. Integrate Twilio for SMS alerts
+5. ✅ Build frontend inventory management UI
+6. Build API endpoints for CRUD operations
+7. Integrate Twilio for SMS alerts (or migrate to Web Push)
 8. Build alert approval workflow
+
+### Phase 2 - Hub Expansion System (In Progress)
+1. Implement custom_regions table with 7 default Melbourne regions
+2. Implement regional_hubs table for partner management
+3. Implement hub_expansion_scenarios for economic planning
+4. Build hub economics calculation engine
+5. Create hub planning dashboard UI
+6. Build CSV import wizard for distributors/partners
+7. Implement multi-tier stock transfer system
+8. Build region management interface
 
 ---
 
-**Total Tables**: 7 core tables
-**Total Indexes**: ~40 indexes for query optimization
-**Total Triggers**: 4 automatic update triggers
-**Total Constraints**: 8 business rule constraints
+**Total Tables**: 11 core tables (7 Phase 1 + 4 Phase 2)
+**Total Indexes**: ~60 indexes for query optimization
+**Total Triggers**: 5 automatic update triggers
+**Total Functions**: 2 (profit calculation + hub economics)
+**Total Constraints**: 10 business rule constraints
+
+---
+
+## 📋 Phase 2: Hub Expansion Tables
+
+### 8. custom_regions
+User-defined or default geographic regions for hub planning
+
+```sql
+CREATE TABLE custom_regions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  
+  -- Region Type
+  type VARCHAR(50) DEFAULT 'default', -- 'default' (system-provided), 'custom' (user-created)
+  
+  -- Visual
+  color VARCHAR(7) DEFAULT '#6B7280', -- Hex color for UI (#DC2626)
+  
+  -- Boundary Definition
+  boundary_type VARCHAR(50) DEFAULT 'postcode_list', 
+  -- 'postcode_list', 'geographic_polygon', 'radius', 'manual_assignment'
+  
+  -- Method 1: Postcode List (Primary method)
+  postcodes TEXT[], -- ['3000', '3002', '3004']
+  
+  -- Method 2: Geographic Polygon (Future - GeoJSON)
+  boundary_polygon JSONB, -- GeoJSON polygon for map-based boundaries
+  
+  -- Method 3: Radius from Point (Future)
+  center_latitude DECIMAL(10, 8),
+  center_longitude DECIMAL(11, 8),
+  radius_km DECIMAL(5, 2),
+  
+  -- Hub Planning
+  hub_priority VARCHAR(50) DEFAULT 'MEDIUM', -- 'HIGH', 'MEDIUM', 'LOW', 'FUTURE'
+  estimated_stores INT DEFAULT 0, -- Auto-calculated
+  suggested_hub_location TEXT, -- "Brunswick - Sydney Road"
+  
+  -- Business Context
+  rationale TEXT, -- Why this region exists
+  transport_access TEXT, -- "Hume Highway, Sydney Road"
+  
+  -- Status
+  is_active BOOLEAN DEFAULT true,
+  
+  -- Metadata
+  created_by UUID REFERENCES users(id),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_regions_type ON custom_regions(type);
+CREATE INDEX idx_regions_active ON custom_regions(is_active);
+CREATE INDEX idx_regions_postcodes ON custom_regions USING GIN(postcodes); -- Array search
+```
+
+---
+
+### 9. regional_hubs
+Regional distribution hubs (shipping companies, restaurants, warehouses)
+
+```sql
+CREATE TABLE regional_hubs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  location_id UUID REFERENCES locations(id) UNIQUE, -- Links to locations table
+  
+  -- Hub Details
+  hub_type VARCHAR(50) NOT NULL, -- 'shipping_company', 'restaurant', 'warehouse'
+  partner_company_name VARCHAR(255),
+  coverage_regions TEXT[], -- Region names: ['CBD & Inner City', 'Northern Corridor']
+  
+  -- Capacity Planning
+  max_storage_capacity INT DEFAULT 1000,
+  current_stock_level INT DEFAULT 0, -- Auto-updated from inventory
+  ideal_buffer_stock INT DEFAULT 200, -- Emergency stock buffer
+  
+  -- Performance Metrics
+  stores_served INT DEFAULT 0, -- Auto-calculated
+  average_delivery_time_hours DECIMAL(5,2), -- 2.5 hours average
+  total_monthly_shipments INT DEFAULT 0,
+  
+  -- Business Terms
+  commission_rate DECIMAL(5, 2) DEFAULT 5.00, -- Hub takes 5% commission
+  monthly_storage_fee DECIMAL(10, 2) DEFAULT 200.00,
+  contract_duration_months INT DEFAULT 12,
+  contract_start_date DATE,
+  contract_end_date DATE,
+  
+  -- Financial Tracking
+  total_commission_earned DECIMAL(10, 2) DEFAULT 0.00,
+  total_storage_fees_paid DECIMAL(10, 2) DEFAULT 0.00,
+  
+  -- Status
+  is_active BOOLEAN DEFAULT true,
+  onboarding_date DATE,
+  operational_since DATE,
+  
+  -- Metadata
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_hubs_type ON regional_hubs(hub_type);
+CREATE INDEX idx_hubs_active ON regional_hubs(is_active);
+CREATE INDEX idx_hubs_coverage ON regional_hubs USING GIN(coverage_regions);
+```
+
+---
+
+### 10. hub_expansion_scenarios
+Economic planning for potential new hubs
+
+```sql
+CREATE TABLE hub_expansion_scenarios (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  
+  -- Scenario Details
+  scenario_name VARCHAR(255) NOT NULL,
+  target_regions TEXT[] NOT NULL, -- ['North', 'North-East']
+  status VARCHAR(50) DEFAULT 'planning', 
+  -- 'planning', 'approved', 'in_progress', 'operational', 'rejected'
+  
+  -- Partner Information
+  proposed_hub_type VARCHAR(50), -- 'shipping_company', 'restaurant', 'warehouse'
+  partner_company_name VARCHAR(255),
+  partner_contact_person VARCHAR(255),
+  partner_phone VARCHAR(50),
+  partner_email VARCHAR(255),
+  
+  -- Location Details
+  proposed_address TEXT,
+  proposed_latitude DECIMAL(10, 8),
+  proposed_longitude DECIMAL(11, 8),
+  
+  -- Capacity Planning
+  proposed_storage_capacity INT,
+  proposed_buffer_stock INT,
+  
+  -- Current State Analysis (Auto-calculated)
+  stores_in_target_area INT,
+  current_monthly_shipments INT,
+  current_avg_delivery_cost DECIMAL(10, 2),
+  current_total_monthly_cost DECIMAL(10, 2),
+  
+  -- Projected State with Hub (Auto-calculated)
+  projected_monthly_bulk_shipments INT,
+  projected_bulk_shipment_cost DECIMAL(10, 2),
+  projected_local_delivery_cost DECIMAL(10, 2),
+  projected_hub_commission DECIMAL(10, 2),
+  projected_storage_fee DECIMAL(10, 2),
+  projected_total_monthly_cost DECIMAL(10, 2),
+  
+  -- Economic Analysis (Auto-calculated)
+  monthly_savings DECIMAL(10, 2), -- current - projected
+  break_even_months INT, -- Setup cost / monthly_savings
+  roi_percentage DECIMAL(5, 2), -- (savings * 12) / setup_cost * 100
+  
+  -- Setup Costs
+  setup_cost DECIMAL(10, 2) DEFAULT 5000.00, -- One-time: equipment, training
+  estimated_monthly_operating_cost DECIMAL(10, 2),
+  
+  -- Business Terms
+  proposed_commission_rate DECIMAL(5, 2) DEFAULT 5.00,
+  proposed_storage_fee DECIMAL(10, 2) DEFAULT 200.00,
+  contract_duration_months INT DEFAULT 12,
+  
+  -- Decision Tracking
+  created_by UUID REFERENCES users(id),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  approved_by UUID REFERENCES users(id),
+  approved_at TIMESTAMP,
+  rejection_reason TEXT,
+  
+  -- Notes
+  business_case TEXT,
+  risk_assessment TEXT,
+  
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_scenarios_status ON hub_expansion_scenarios(status);
+CREATE INDEX idx_scenarios_target ON hub_expansion_scenarios USING GIN(target_regions);
+CREATE INDEX idx_scenarios_created ON hub_expansion_scenarios(created_at DESC);
+```
+
+---
+
+### 11. hub_csv_imports
+Track CSV imports of distributors and prospective partners
+
+```sql
+CREATE TABLE hub_csv_imports (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  
+  -- Import Metadata
+  import_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  imported_by UUID REFERENCES users(id),
+  file_name VARCHAR(255),
+  total_rows INT,
+  
+  -- Import Type
+  import_type VARCHAR(50) NOT NULL, 
+  -- 'existing_distributors' (already working with us)
+  -- 'prospective_partners' (potential hubs to contact)
+  
+  -- Status
+  status VARCHAR(50) DEFAULT 'pending', -- 'pending', 'processed', 'failed'
+  processed_rows INT DEFAULT 0,
+  failed_rows INT DEFAULT 0,
+  error_log JSONB,
+  
+  -- Preview Data
+  sample_data JSONB, -- First 5 rows for review
+  
+  -- Processing
+  processed_at TIMESTAMP,
+  processing_duration_seconds INT
+);
+
+CREATE TABLE hub_csv_import_rows (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  import_id UUID REFERENCES hub_csv_imports(id) ON DELETE CASCADE,
+  
+  -- CSV Row Data
+  row_number INT,
+  raw_data JSONB, -- Store entire row as JSON
+  
+  -- Parsed Common Fields
+  company_name VARCHAR(255),
+  contact_person VARCHAR(255),
+  phone VARCHAR(50),
+  email VARCHAR(255),
+  address TEXT,
+  region VARCHAR(100),
+  
+  -- For existing_distributors
+  current_location_id UUID REFERENCES locations(id),
+  average_monthly_orders INT,
+  relationship_status VARCHAR(50), -- 'active', 'inactive', 'pending'
+  
+  -- For prospective_partners
+  business_type VARCHAR(100), -- 'Shipping Company', 'Restaurant', 'Warehouse'
+  estimated_capacity INT,
+  interest_level VARCHAR(50), -- 'high', 'medium', 'low', 'cold_lead'
+  
+  -- Processing Status
+  status VARCHAR(50) DEFAULT 'pending', 
+  -- 'pending', 'converted_to_scenario', 'converted_to_hub', 'rejected', 'duplicate'
+  
+  converted_to_scenario_id UUID REFERENCES hub_expansion_scenarios(id),
+  converted_to_hub_id UUID REFERENCES regional_hubs(id),
+  
+  processing_notes TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_csv_import_rows_import ON hub_csv_import_rows(import_id);
+CREATE INDEX idx_csv_import_rows_status ON hub_csv_import_rows(status);
+```
+
+---
+
+## 📐 Phase 2: Enhanced Existing Tables
+
+### Enhanced locations table (Multi-tier support)
+
+```sql
+-- Add columns to existing locations table
+ALTER TABLE locations
+ADD COLUMN location_tier VARCHAR(50) DEFAULT 'retail_store';
+-- Values: 'head_office', 'regional_hub', 'retail_store'
+
+ALTER TABLE locations
+ADD COLUMN hub_capabilities JSONB;
+-- Example: {
+--   "warehousing": true,
+--   "product_showcase": true,
+--   "emergency_stock": 200,
+--   "serves_regions": ["North", "North-East"]
+-- }
+
+ALTER TABLE locations
+ADD COLUMN business_model VARCHAR(50) DEFAULT 'retail';
+-- Values: 'manufacturer', 'logistics_partner', 'restaurant_partner', 'retail'
+
+-- region field becomes more important (links to custom_regions.name)
+-- parent_location_id now has clear meaning:
+--   - NULL = Head Office
+--   - HUB_ID = Retail stores under a hub
+--   - HEAD_OFFICE_ID = Hubs reporting to head office
+
+CREATE INDEX idx_locations_tier ON locations(location_tier);
+CREATE INDEX idx_locations_business_model ON locations(business_model);
+```
+
+### Enhanced stock_movements table (Multi-tier tracking)
+
+```sql
+ALTER TABLE stock_movements
+ADD COLUMN movement_tier VARCHAR(50);
+-- Values: 
+-- 'head_to_hub' (bulk shipment from HO to hub)
+-- 'hub_to_store' (local distribution from hub to store)
+-- 'head_to_store' (direct, legacy before hubs)
+-- 'store_to_hub' (returns)
+
+ALTER TABLE stock_movements
+ADD COLUMN via_hub_id UUID REFERENCES locations(id);
+-- Track which hub facilitated this transfer
+
+ALTER TABLE stock_movements
+ADD COLUMN is_bulk_shipment BOOLEAN DEFAULT false;
+
+ALTER TABLE stock_movements
+ADD COLUMN expected_delivery_date DATE;
+
+CREATE INDEX idx_movements_tier ON stock_movements(movement_tier);
+CREATE INDEX idx_movements_via_hub ON stock_movements(via_hub_id);
+```
+
+---
+
+## ⚙️ Phase 2: Functions & Calculations
+
+### Hub Economic Viability Calculator
+
+```sql
+CREATE OR REPLACE FUNCTION calculate_hub_economics(
+  p_scenario_id UUID
+) RETURNS JSONB AS $$
+DECLARE
+  v_scenario hub_expansion_scenarios%ROWTYPE;
+  v_stores_count INT;
+  v_current_cost DECIMAL(10,2);
+  v_projected_cost DECIMAL(10,2);
+  v_bulk_shipment_cost DECIMAL(10,2);
+  v_local_delivery_cost DECIMAL(10,2);
+  v_hub_commission DECIMAL(10,2);
+  v_storage_fee DECIMAL(10,2);
+  v_result JSONB;
+BEGIN
+  -- Get scenario details
+  SELECT * INTO v_scenario FROM hub_expansion_scenarios WHERE id = p_scenario_id;
+  
+  -- Count stores in target regions
+  SELECT COUNT(*) INTO v_stores_count
+  FROM locations
+  WHERE region = ANY(v_scenario.target_regions)
+    AND location_tier = 'retail_store'
+    AND status = 'active';
+  
+  -- Calculate current costs (direct shipping from Head Office)
+  -- Assumption: $15 per shipment, 2 shipments per store per month
+  v_current_cost := v_stores_count * 2 * 15.00;
+  
+  -- Calculate projected costs with hub
+  -- Bulk shipment from Head Office to Hub (weekly = 4 times/month)
+  -- Bulk rate is 60% of individual shipping (40% discount)
+  v_bulk_shipment_cost := 4 * (v_stores_count * 15.00 * 0.60);
+  
+  -- Local delivery from Hub to Stores (2 times/month per store)
+  -- Local delivery is $5 per shipment (cheaper, shorter distance)
+  v_local_delivery_cost := v_stores_count * 2 * 5.00;
+  
+  -- Hub commission (% of product value)
+  -- Assumption: Average order value $500
+  v_hub_commission := v_stores_count * 2 * 500 * 
+                      (COALESCE(v_scenario.proposed_commission_rate, 5.00) / 100.0);
+  
+  -- Storage fee (flat monthly)
+  v_storage_fee := COALESCE(v_scenario.proposed_storage_fee, 200.00);
+  
+  v_projected_cost := v_bulk_shipment_cost + v_local_delivery_cost + 
+                      v_hub_commission + v_storage_fee;
+  
+  -- Build result JSON
+  v_result := jsonb_build_object(
+    'stores_count', v_stores_count,
+    'current_monthly_cost', v_current_cost,
+    'projected_costs', jsonb_build_object(
+      'bulk_shipments', v_bulk_shipment_cost,
+      'local_deliveries', v_local_delivery_cost,
+      'hub_commission', v_hub_commission,
+      'storage_fee', v_storage_fee,
+      'total', v_projected_cost
+    ),
+    'monthly_savings', v_current_cost - v_projected_cost,
+    'break_even_months', CASE 
+      WHEN (v_current_cost - v_projected_cost) > 0 
+      THEN CEIL(COALESCE(v_scenario.setup_cost, 5000.00) / (v_current_cost - v_projected_cost))
+      ELSE NULL 
+    END,
+    'roi_12_months', CASE
+      WHEN COALESCE(v_scenario.setup_cost, 0) > 0
+      THEN ((v_current_cost - v_projected_cost) * 12 / v_scenario.setup_cost * 100)
+      ELSE NULL
+    END,
+    'is_economical', (v_current_cost - v_projected_cost) > 0 AND v_stores_count >= 3
+  );
+  
+  -- Update scenario with calculations
+  UPDATE hub_expansion_scenarios SET
+    stores_in_target_area = v_stores_count,
+    current_total_monthly_cost = v_current_cost,
+    projected_total_monthly_cost = v_projected_cost,
+    monthly_savings = v_current_cost - v_projected_cost,
+    break_even_months = (v_result->>'break_even_months')::INT,
+    roi_percentage = (v_result->>'roi_12_months')::DECIMAL(5,2),
+    updated_at = CURRENT_TIMESTAMP
+  WHERE id = p_scenario_id;
+  
+  RETURN v_result;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Usage:
+-- SELECT calculate_hub_economics('scenario-uuid-here');
+```
+
+### Auto-assign Store to Region by Postcode
+
+```sql
+CREATE OR REPLACE FUNCTION auto_assign_store_region()
+RETURNS TRIGGER AS $$
+DECLARE
+  v_postcode VARCHAR(4);
+  v_region custom_regions%ROWTYPE;
+BEGIN
+  -- Extract 4-digit postcode from postal_code field
+  v_postcode := substring(NEW.postal_code FROM '\d{4}');
+  
+  IF v_postcode IS NOT NULL THEN
+    -- Find region that contains this postcode
+    SELECT * INTO v_region
+    FROM custom_regions
+    WHERE v_postcode = ANY(postcodes)
+      AND is_active = true
+    LIMIT 1;
+    
+    IF FOUND THEN
+      NEW.region := v_region.name;
+    END IF;
+  END IF;
+  
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger: Auto-assign region when store is created or postal_code updated
+CREATE TRIGGER trigger_auto_assign_region
+BEFORE INSERT OR UPDATE OF postal_code ON locations
+FOR EACH ROW
+WHEN (NEW.location_tier = 'retail_store')
+EXECUTE FUNCTION auto_assign_store_region();
+```
+
+---
+
+## 🌱 Phase 2: Seed Data
+
+### Default Melbourne Regions (7 Hub-Friendly Regions)
+
+```sql
+-- Insert 7 default Melbourne regions optimized for hub planning
+INSERT INTO custom_regions (
+  name, description, type, color, postcodes, hub_priority, 
+  suggested_hub_location, rationale, transport_access
+) VALUES
+(
+  'CBD & Inner City',
+  'Melbourne CBD and immediate surrounds',
+  'default',
+  '#DC2626',
+  ARRAY['3000','3002','3004','3006','3008','3010','3065','3066','3067','3121'],
+  'HIGH',
+  'Queen Victoria Market area',
+  'Highest density, can serve on same day',
+  'All major roads converge here'
+),
+(
+  'Northern Corridor',
+  'Inner and outer northern suburbs',
+  'default',
+  '#2563EB',
+  ARRAY['3051','3053','3054','3055','3056','3057','3058','3072','3073','3074','3075','3076'],
+  'HIGH',
+  'Brunswick - Sydney Road',
+  'Strong food scene, high Asian demographic',
+  'Hume Highway, Sydney Road'
+),
+(
+  'Eastern Suburbs',
+  'Box Hill, Doncaster, eastern corridor',
+  'default',
+  '#16A34A',
+  ARRAY['3101','3102','3103','3104','3105','3122','3123','3124','3125','3126'],
+  'MEDIUM',
+  'Box Hill Central',
+  'Large Asian community, affluent suburbs',
+  'Eastern Freeway, Maroondah Highway'
+),
+(
+  'Bayside & South',
+  'South Melbourne, Port Melbourne, St Kilda, bayside suburbs',
+  'default',
+  '#9333EA',
+  ARRAY['3141','3142','3181','3182','3183','3184','3185','3186','3187','3188'],
+  'MEDIUM',
+  'Chapel Street or St Kilda',
+  'Tourism + residential mix',
+  'St Kilda Road, Nepean Highway'
+),
+(
+  'Western Suburbs',
+  'Footscray, Sunshine, western corridor',
+  'default',
+  '#EA580C',
+  ARRAY['3011','3012','3013','3015','3016','3020','3021','3022','3023'],
+  'MEDIUM',
+  'Footscray Market',
+  'Multicultural, growing food scene',
+  'West Gate Freeway, Ballarat Road'
+),
+(
+  'South East Melbourne',
+  'Springvale, Dandenong, south-eastern suburbs',
+  'default',
+  '#CA8A04',
+  ARRAY['3150','3168','3169','3170','3171','3172','3173','3174','3175'],
+  'LOW',
+  'Springvale or Dandenong',
+  'Further out, but growing population',
+  'Monash Freeway, Princes Highway'
+),
+(
+  'Outer Growth Corridors',
+  'Werribee, Cranbourne, Pakenham - future growth areas',
+  'default',
+  '#6B7280',
+  ARRAY['3023','3029','3030','3977','3975','3810','3805'],
+  'FUTURE',
+  'TBD - wait for density',
+  'Low density now, high growth potential',
+  'Western Highway, South Gippsland Highway'
+)
+ON CONFLICT DO NOTHING;
+
+-- Update estimated_stores counts based on actual locations
+UPDATE custom_regions r
+SET estimated_stores = (
+  SELECT COUNT(*)
+  FROM locations l
+  WHERE l.region = r.name
+    AND l.location_tier = 'retail_store'
+    AND l.status = 'active'
+),
+updated_at = CURRENT_TIMESTAMP
+WHERE type = 'default';
+```

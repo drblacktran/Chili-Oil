@@ -1,0 +1,268 @@
+---
+/**
+ * System Activity Logs Page
+ * View all system changes, stock updates, transfers, and alerts
+ */
+import MainLayout from '../layouts/MainLayout.astro';
+import { mockSystemLogs } from '../utils/mockSystemLogs';
+
+// Group logs by date
+const logsByDate = mockSystemLogs.reduce((acc, log) => {
+  const date = new Date(log.timestamp).toLocaleDateString('en-AU', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  if (!acc[date]) acc[date] = [];
+  acc[date].push(log);
+  return acc;
+}, {} as Record<string, typeof mockSystemLogs>);
+
+// Count by severity
+const severityCounts = {
+  info: mockSystemLogs.filter(l => l.severity === 'info').length,
+  success: mockSystemLogs.filter(l => l.severity === 'success').length,
+  warning: mockSystemLogs.filter(l => l.severity === 'warning').length,
+  error: mockSystemLogs.filter(l => l.severity === 'error').length,
+};
+
+// Count by type
+const typeCounts = {
+  stock_update: mockSystemLogs.filter(l => l.log_type === 'stock_update').length,
+  transfer: mockSystemLogs.filter(l => l.log_type === 'transfer').length,
+  restock: mockSystemLogs.filter(l => l.log_type === 'restock').length,
+  alert_sent: mockSystemLogs.filter(l => l.log_type === 'alert_sent').length,
+  settings_change: mockSystemLogs.filter(l => l.log_type === 'settings_change').length,
+  user_action: mockSystemLogs.filter(l => l.log_type === 'user_action').length,
+};
+---
+
+<MainLayout title="System Activity Logs" currentPage="logs">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="text-3xl font-bold text-gray-900">System Activity Logs</h1>
+      <p class="mt-2 text-sm text-gray-600">
+        Track all stock updates, transfers, restocks, and system changes
+      </p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <div class="flex items-center justify-between">
+          <div class="text-sm font-medium text-gray-500">Total Logs</div>
+          <div class="text-2xl">📋</div>
+        </div>
+        <div class="mt-1 text-2xl font-bold text-gray-900">{mockSystemLogs.length}</div>
+      </div>
+      
+      <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div class="flex items-center justify-between">
+          <div class="text-sm font-medium text-green-700">Success</div>
+          <div class="text-2xl">✅</div>
+        </div>
+        <div class="mt-1 text-2xl font-bold text-green-900">{severityCounts.success}</div>
+      </div>
+      
+      <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <div class="flex items-center justify-between">
+          <div class="text-sm font-medium text-yellow-700">Warnings</div>
+          <div class="text-2xl">⚠️</div>
+        </div>
+        <div class="mt-1 text-2xl font-bold text-yellow-900">{severityCounts.warning}</div>
+      </div>
+      
+      <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div class="flex items-center justify-between">
+          <div class="text-sm font-medium text-red-700">Errors</div>
+          <div class="text-2xl">❌</div>
+        </div>
+        <div class="mt-1 text-2xl font-bold text-red-900">{severityCounts.error}</div>
+      </div>
+    </div>
+
+    <!-- Activity Type Filters -->
+    <div class="mb-6 bg-white border border-gray-200 rounded-lg p-4">
+      <h2 class="text-sm font-semibold text-gray-900 mb-3">Activity Types</h2>
+      <div class="flex flex-wrap gap-2">
+        <div class="inline-flex items-center px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-lg text-sm">
+          <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+          <span class="font-medium text-blue-900">Stock Updates</span>
+          <span class="ml-2 px-2 py-0.5 bg-blue-100 rounded-full text-xs font-semibold text-blue-700">
+            {typeCounts.stock_update}
+          </span>
+        </div>
+        
+        <div class="inline-flex items-center px-3 py-1.5 bg-purple-50 border border-purple-200 rounded-lg text-sm">
+          <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+          <span class="font-medium text-purple-900">Transfers</span>
+          <span class="ml-2 px-2 py-0.5 bg-purple-100 rounded-full text-xs font-semibold text-purple-700">
+            {typeCounts.transfer}
+          </span>
+        </div>
+        
+        <div class="inline-flex items-center px-3 py-1.5 bg-green-50 border border-green-200 rounded-lg text-sm">
+          <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+          <span class="font-medium text-green-900">Restocks</span>
+          <span class="ml-2 px-2 py-0.5 bg-green-100 rounded-full text-xs font-semibold text-green-700">
+            {typeCounts.restock}
+          </span>
+        </div>
+        
+        <div class="inline-flex items-center px-3 py-1.5 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
+          <span class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
+          <span class="font-medium text-yellow-900">Alerts</span>
+          <span class="ml-2 px-2 py-0.5 bg-yellow-100 rounded-full text-xs font-semibold text-yellow-700">
+            {typeCounts.alert_sent}
+          </span>
+        </div>
+        
+        <div class="inline-flex items-center px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-sm">
+          <span class="w-2 h-2 bg-gray-500 rounded-full mr-2"></span>
+          <span class="font-medium text-gray-900">Settings</span>
+          <span class="ml-2 px-2 py-0.5 bg-gray-100 rounded-full text-xs font-semibold text-gray-700">
+            {typeCounts.settings_change}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity Timeline -->
+    <div class="space-y-6">
+      {Object.entries(logsByDate).map(([date, logs]) => (
+        <div>
+          <div class="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-2 z-10">
+            <h3 class="text-sm font-semibold text-gray-900">{date}</h3>
+          </div>
+          
+          <div class="bg-white border-x border-b border-gray-200 divide-y divide-gray-200">
+            {logs.map(log => {
+              const severityStyles = {
+                info: 'bg-blue-50 border-blue-200 text-blue-700',
+                success: 'bg-green-50 border-green-200 text-green-700',
+                warning: 'bg-yellow-50 border-yellow-200 text-yellow-700',
+                error: 'bg-red-50 border-red-200 text-red-700',
+              };
+              
+              const typeIcons = {
+                stock_update: '📦',
+                transfer: '🚚',
+                restock: '📥',
+                alert_sent: '🔔',
+                settings_change: '⚙️',
+                user_action: '👤',
+              };
+              
+              const time = new Date(log.timestamp).toLocaleTimeString('en-AU', {
+                hour: '2-digit',
+                minute: '2-digit',
+              });
+              
+              return (
+                <div class="p-4 hover:bg-gray-50 transition-colors">
+                  <div class="flex items-start gap-4">
+                    <!-- Icon -->
+                    <div class="flex-shrink-0 text-2xl">
+                      {typeIcons[log.log_type]}
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-start justify-between gap-4">
+                        <div class="flex-1">
+                          <h4 class="text-sm font-semibold text-gray-900">
+                            {log.title}
+                          </h4>
+                          <p class="text-sm text-gray-600 mt-0.5">
+                            {log.description}
+                          </p>
+                        </div>
+                        
+                        <div class="flex-shrink-0">
+                          <span class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${severityStyles[log.severity]}`}>
+                            {log.severity}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <!-- Details Grid -->
+                      <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                        {log.store_name && (
+                          <div>
+                            <div class="text-gray-500">Store</div>
+                            <div class="font-medium text-gray-900">{log.store_name}</div>
+                          </div>
+                        )}
+                        
+                        {log.product_name && (
+                          <div>
+                            <div class="text-gray-500">Product</div>
+                            <div class="font-medium text-gray-900">{log.product_name}</div>
+                          </div>
+                        )}
+                        
+                        {log.quantity_change !== undefined && (
+                          <div>
+                            <div class="text-gray-500">Quantity Change</div>
+                            <div class={`font-medium ${log.quantity_change > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              {log.quantity_change > 0 ? '+' : ''}{log.quantity_change}
+                              {log.old_value !== undefined && log.new_value !== undefined && (
+                                <span class="text-gray-500 ml-1">
+                                  ({log.old_value} → {log.new_value})
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {log.old_value !== undefined && log.new_value !== undefined && log.quantity_change === undefined && (
+                          <div>
+                            <div class="text-gray-500">Changed</div>
+                            <div class="font-medium text-gray-900">
+                              {log.old_value} → {log.new_value}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <!-- Footer -->
+                      <div class="mt-3 flex items-center justify-between text-xs">
+                        <div class="text-gray-500">
+                          <span class="font-medium text-gray-700">{log.triggered_by}</span>
+                        </div>
+                        <div class="text-gray-500">{time}</div>
+                      </div>
+                      
+                      <!-- Metadata (expandable) -->
+                      {log.metadata && Object.keys(log.metadata).length > 0 && (
+                        <details class="mt-3">
+                          <summary class="cursor-pointer text-xs text-blue-600 hover:text-blue-700">
+                            View metadata ({Object.keys(log.metadata).length} fields)
+                          </summary>
+                          <div class="mt-2 p-3 bg-gray-50 rounded border border-gray-200">
+                            <dl class="grid grid-cols-2 gap-2 text-xs">
+                              {Object.entries(log.metadata).map(([key, value]) => (
+                                <div>
+                                  <dt class="text-gray-500">{key.replace(/_/g, ' ')}</dt>
+                                  <dd class="font-medium text-gray-900">
+                                    {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                                  </dd>
+                                </div>
+                              ))}
+                            </dl>
+                          </div>
+                        </details>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</MainLayout>

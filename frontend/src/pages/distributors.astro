@@ -1,0 +1,143 @@
+---
+/**
+ * Distributors & Hub Expansion Page
+ * Interactive map showing stores, hubs, and expansion opportunities
+ */
+import MainLayout from '../layouts/MainLayout.astro';
+import HubExpansionMap from '../components/HubExpansionMap';
+import { mockStoresWithCoordinates, mockRegionalHubs } from '../utils/mockHubData';
+---
+
+<MainLayout title="Distributors & Hub Expansion" currentPage="distributors">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="text-3xl font-bold text-gray-900">Distributors & Hub Expansion</h1>
+      <p class="mt-2 text-sm text-gray-600">
+        Visualize store distribution, hub coverage, and plan regional expansion
+      </p>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <div class="text-sm font-medium text-gray-500">Total Stores</div>
+        <div class="mt-1 text-2xl font-bold text-gray-900">{mockStoresWithCoordinates.length}</div>
+        <div class="mt-1 text-xs text-gray-500">
+          Across {new Set(mockStoresWithCoordinates.map(s => s.region)).size} regions
+        </div>
+      </div>
+      
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <div class="text-sm font-medium text-gray-500">Active Hubs</div>
+        <div class="mt-1 text-2xl font-bold text-gray-900">{mockRegionalHubs.length}</div>
+        <div class="mt-1 text-xs text-gray-500">
+          Serving {mockRegionalHubs.reduce((sum, h) => sum + h.stores_served, 0)} stores
+        </div>
+      </div>
+      
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <div class="text-sm font-medium text-gray-500">Coverage Rate</div>
+        <div class="mt-1 text-2xl font-bold text-gray-900">
+          {Math.round((mockRegionalHubs.reduce((sum, h) => sum + h.stores_served, 0) / mockStoresWithCoordinates.length) * 100)}%
+        </div>
+        <div class="mt-1 text-xs text-gray-500">
+          Stores served by hubs
+        </div>
+      </div>
+      
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <div class="text-sm font-medium text-gray-500">Expansion Opportunities</div>
+        <div class="mt-1 text-2xl font-bold text-gray-900">
+          {mockStoresWithCoordinates.length - mockRegionalHubs.reduce((sum, h) => sum + h.stores_served, 0)}
+        </div>
+        <div class="mt-1 text-xs text-gray-500">
+          Stores without hub coverage
+        </div>
+      </div>
+    </div>
+
+    <!-- Regional Breakdown -->
+    <div class="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <h2 class="text-sm font-semibold text-blue-900 mb-2">Regional Distribution</h2>
+      <div class="flex flex-wrap gap-2">
+        {Array.from(new Set(mockStoresWithCoordinates.map(s => s.region))).map(region => {
+          const count = mockStoresWithCoordinates.filter(s => s.region === region).length;
+          return (
+            <div class="inline-flex items-center px-3 py-1 bg-white border border-blue-200 rounded-full text-sm">
+              <span class="font-medium text-blue-900">{region}</span>
+              <span class="ml-2 px-2 py-0.5 bg-blue-100 rounded-full text-xs font-semibold text-blue-700">
+                {count}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+
+    <!-- Map Component -->
+    <div class="bg-white border border-gray-200 rounded-lg p-6">
+      <div class="mb-4">
+        <h2 class="text-lg font-semibold text-gray-900">Distribution Map</h2>
+        <p class="text-sm text-gray-600 mt-1">
+          Click markers to view store/hub details. Circles show 10km hub coverage radius.
+        </p>
+      </div>
+      <HubExpansionMap
+        client:load
+        stores={mockStoresWithCoordinates}
+        hubs={mockRegionalHubs}
+        selectedRegion={null}
+      />
+    </div>
+
+    <!-- Hub Performance Summary -->
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      {mockRegionalHubs.map(hub => (
+        <div class="bg-white border border-gray-200 rounded-lg p-5">
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <h3 class="font-semibold text-gray-900">{hub.location?.name || 'Unknown Location'}</h3>
+              <p class="text-sm text-gray-600">{hub.partner_company_name}</p>
+            </div>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              {hub.hub_type === 'shipping_company' ? 'Logistics' : hub.hub_type === 'restaurant' ? 'Restaurant' : 'Warehouse'}
+            </span>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <div class="text-gray-500">Coverage Regions</div>
+              <div class="font-medium text-gray-900">{hub.coverage_regions.join(', ')}</div>
+            </div>
+            <div>
+              <div class="text-gray-500">Stores Served</div>
+              <div class="font-medium text-gray-900">{hub.stores_served}</div>
+            </div>
+            <div>
+              <div class="text-gray-500">Monthly Shipments</div>
+              <div class="font-medium text-gray-900">{hub.total_monthly_shipments}</div>
+            </div>
+            <div>
+              <div class="text-gray-500">Commission Rate</div>
+              <div class="font-medium text-gray-900">{hub.commission_rate}%</div>
+            </div>
+            <div>
+              <div class="text-gray-500">Stock Level</div>
+              <div class="font-medium text-gray-900">
+                {hub.current_stock_level} / {hub.max_storage_capacity}
+                <span class="text-xs text-gray-500 ml-1">
+                  ({Math.round((hub.current_stock_level / hub.max_storage_capacity) * 100)}%)
+                </span>
+              </div>
+            </div>
+            <div>
+              <div class="text-gray-500">Avg Delivery Time</div>
+              <div class="font-medium text-gray-900">{hub.average_delivery_time_hours}h</div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</MainLayout>
