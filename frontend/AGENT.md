@@ -76,16 +76,20 @@ cp business.config.example.ts business.config.local.ts
 - **@vite-pwa/astro 1.1.1** - Progressive Web App support
 - **workbox-window 7.3.0** - Service worker management
 
-### Backend (Future)
-- **Express.js** - REST API
-- **PostgreSQL** - Database
-- **Knex.js or Prisma** - ORM (to be decided)
-- **JWT** - Authentication
-- **bcrypt** - Password hashing
+### Backend (Supabase - Backend-as-a-Service)
+- **Supabase** - Managed PostgreSQL + Auth + Real-time + Storage
+- **Auto-generated REST API** - From database schema
+- **Row-Level Security (RLS)** - PostgreSQL policies for authorization
+- **Real-time Subscriptions** - Live data updates across clients
+- **Supabase Auth** - Built-in authentication (email/password, OAuth)
+- **Supabase Storage** - File uploads (product images, CSV imports)
 
-### Services (Future)
-- **Cloudinary or AWS S3** - Image storage
-- **Web Push API** - Browser notifications (replacing Twilio SMS)
+### PWA Offline Layer
+- **Dexie.js** - IndexedDB wrapper for local storage
+- **Offline-first Architecture** - User → IndexedDB → Sync Queue → Supabase
+- **Sync Queue** - Queues updates when offline, syncs when online
+- **Conflict Resolution** - Last-write-wins strategy
+- **Real-time Sync** - Changes propagate to other devices instantly
 
 ### Development Tools
 - **@astrojs/check** - TypeScript type checking
@@ -1724,21 +1728,464 @@ npm run preview
    - Swipe gestures
    - Dark mode
 
-**Phase 3: Backend Integration**
+**Phase 3: Supabase Integration (55h - Next Sprint)**
 
-1. Replace mock data with real API calls
-2. Database setup with PostgreSQL
-3. Express.js REST API
-4. Authentication endpoints
-5. Web Push server setup
+**Architecture Decision:** Using Supabase (Backend-as-a-Service) instead of custom Express.js backend for faster delivery, lower costs, and superior features.
 
-**Phase 4: UI Polish**
+✅ **Benefits:**
+- Auto-generated REST API from PostgreSQL schema
+- Built-in authentication and authorization (no custom JWT implementation)
+- Real-time subscriptions out-of-the-box
+- 3-year cost savings: $9,570 (72% vs custom backend)
+- Zero server management or DevOps required
 
-1. Loading states and skeleton screens
-2. Error handling and retry logic
-3. Animations and transitions
-4. Accessibility improvements
-5. Performance optimization
+**Tasks:**
+
+1. **Supabase Project Setup (2h)**
+   - [ ] Create Supabase project
+   - [ ] Configure environment variables (SUPABASE_URL, SUPABASE_ANON_KEY)
+   - [ ] Set up development and production projects
+   - [ ] Install Supabase client library: `npm install @supabase/supabase-js`
+
+2. **Database Schema Migration (4h)**
+   - [ ] Import DATABASE_SCHEMA_V2.md schema to Supabase
+   - [ ] Create all 11 tables with triggers and functions
+   - [ ] Generate TypeScript types: `npx supabase gen types typescript`
+   - [ ] Update `src/types/` with Supabase-generated types
+   - [ ] Verify triggers and functions work correctly
+
+3. **Authentication Setup (6h)**
+   - [ ] Configure Supabase Auth (email/password)
+   - [ ] Create login/logout UI components
+   - [ ] Implement protected routes
+   - [ ] Set up Row-Level Security (RLS) policies
+   - [ ] Test role-based access (admin vs store manager)
+
+4. **Row-Level Security Policies (8h)**
+   - [ ] Admin: Full access to all tables
+   - [ ] Store Manager: Read-only access to own store inventory
+   - [ ] Store Manager: Can create stock movements for own store
+   - [ ] Store Manager: Can approve alerts for own store
+   - [ ] Hub Manager: Access to hub and assigned stores
+   - [ ] Test security policies thoroughly
+
+5. **API Integration - Inventory (8h)**
+   - [ ] Replace mockInventoryData with Supabase queries
+   - [ ] `GET /rest/v1/inventory` - List inventory with filters
+   - [ ] `PATCH /rest/v1/inventory?id=eq.{id}` - Update stock level
+   - [ ] `GET /rest/v1/inventory?location_id=eq.{id}` - Single store
+   - [ ] Implement error handling and loading states
+
+6. **API Integration - Hub Expansion (7h)**
+   - [ ] `GET /rest/v1/regional_hubs` - List hubs with coverage
+   - [ ] `POST /rest/v1/hub_expansion_scenarios` - Create scenario
+   - [ ] `PATCH /rest/v1/hub_expansion_scenarios?id=eq.{id}` - Update scenario
+   - [ ] `GET /rest/v1/custom_regions` - List custom regions
+   - [ ] `POST /rest/v1/custom_regions` - Create custom region
+
+7. **API Integration - Transfers & Alerts (5h)**
+   - [ ] `POST /rest/v1/stock_movements` - Create transfer
+   - [ ] `GET /rest/v1/alert_queue` - List pending alerts
+   - [ ] `PATCH /rest/v1/alert_queue?id=eq.{id}` - Approve/reject alert
+   - [ ] `GET /rest/v1/system_logs` - Activity logs with filters
+
+8. **Real-time Subscriptions (5h)**
+   - [ ] Subscribe to inventory changes (live stock updates)
+   - [ ] Subscribe to alert queue (real-time alert notifications)
+   - [ ] Subscribe to stock movements (transfer status updates)
+   - [ ] Handle reconnection and offline scenarios
+   - [ ] Test multi-user real-time sync
+
+9. **File Storage Integration (2h)**
+   - [ ] Configure Supabase Storage bucket for product images
+   - [ ] Upload product images to Supabase Storage
+   - [ ] Update `image_url` to use Supabase Storage URLs
+   - [ ] Implement CSV upload for hub imports (future)
+
+10. **Testing & Validation (8h)**
+    - [ ] End-to-end testing of all API endpoints
+    - [ ] Test authentication flows
+    - [ ] Test RLS policies with different user roles
+    - [ ] Performance testing with large datasets
+    - [ ] Error handling and edge cases
+    - [ ] Security audit (SQL injection prevention, XSS, CSRF)
+
+**Phase 4: PWA Offline Layer (20h - After Supabase)**
+
+**Why Offline Capability?**
+- Warehouse managers need to update stock in areas with poor signal
+- Delivery drivers need to log transfers on the road
+- Store managers need reliability during internet outages
+- Multi-device sync for seamless experience
+
+**Architecture:**
+```
+User Action → IndexedDB (instant) → Sync Queue → Supabase (when online) → Real-time to other devices
+```
+
+**Tasks:**
+
+1. **IndexedDB Setup with Dexie.js (3h)**
+   - [ ] Install Dexie: `npm install dexie`
+   - [ ] Create database schema matching Supabase tables
+   - [ ] Set up tables: inventory, stock_movements, alert_queue, products
+   - [ ] Create indexes for fast queries
+   - [ ] Implement versioning for schema migrations
+
+2. **Offline-First Data Layer (6h)**
+   - [ ] Create `src/services/offlineDb.ts` wrapper
+   - [ ] Implement CRUD operations on IndexedDB
+   - [ ] Query IndexedDB first, fallback to Supabase
+   - [ ] Cache Supabase responses in IndexedDB
+   - [ ] Implement cache invalidation strategy (TTL: 1 hour)
+
+3. **Sync Queue Implementation (5h)**
+   - [ ] Create `sync_queue` table in IndexedDB
+   - [ ] Queue write operations (create, update, delete) when offline
+   - [ ] Detect online/offline status via `navigator.onLine`
+   - [ ] Auto-sync queue when connection restored
+   - [ ] Retry failed syncs with exponential backoff
+   - [ ] UI indicator for pending syncs (e.g., "3 changes pending sync")
+
+4. **Conflict Resolution (4h)**
+   - [ ] Implement last-write-wins strategy (timestamp comparison)
+   - [ ] Detect conflicts: local timestamp vs Supabase updated_at
+   - [ ] Show conflict notification to user
+   - [ ] Allow manual conflict resolution for critical data
+   - [ ] Test conflict scenarios (two users edit same inventory)
+
+5. **Testing & Polish (2h)**
+   - [ ] Test offline → online transition
+   - [ ] Test with slow/intermittent connection (3G simulation)
+   - [ ] Test sync queue with 50+ pending operations
+   - [ ] Verify data consistency after sync
+   - [ ] Add loading indicators during sync
+   - [ ] Test on actual mobile devices (iOS + Android)
+
+---
+
+## Supabase Code Patterns
+
+### Client Setup
+
+```typescript
+// src/lib/supabase.ts
+import { createClient } from '@supabase/supabase-js';
+import type { Database } from '../types/database.types'; // Generated types
+
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+```
+
+### Authentication
+
+```typescript
+// Login
+const { data, error } = await supabase.auth.signInWithPassword({
+  email: 'user@example.com',
+  password: 'password123'
+});
+
+// Logout
+await supabase.auth.signOut();
+
+// Get current user
+const { data: { user } } = await supabase.auth.getUser();
+
+// Listen to auth changes
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_IN') console.log('User signed in', session);
+  if (event === 'SIGNED_OUT') console.log('User signed out');
+});
+```
+
+### Querying Data
+
+```typescript
+// Get all inventory items
+const { data, error } = await supabase
+  .from('inventory')
+  .select('*');
+
+// Get inventory with filters
+const { data, error } = await supabase
+  .from('inventory')
+  .select(`
+    *,
+    product:products(*),
+    location:locations(*)
+  `)
+  .eq('location_id', locationId)
+  .eq('stock_status', 'low')
+  .order('current_stock', { ascending: true });
+
+// Get single item
+const { data, error } = await supabase
+  .from('inventory')
+  .select('*')
+  .eq('id', inventoryId)
+  .single();
+```
+
+### Updating Data
+
+```typescript
+// Update stock level
+const { data, error } = await supabase
+  .from('inventory')
+  .update({ current_stock: newStock })
+  .eq('id', inventoryId)
+  .select()
+  .single();
+
+// Create stock movement
+const { data, error } = await supabase
+  .from('stock_movements')
+  .insert({
+    from_location_id: fromId,
+    to_location_id: toId,
+    product_id: productId,
+    quantity: 50,
+    movement_type: 'transfer',
+    status: 'pending'
+  })
+  .select()
+  .single();
+```
+
+### Real-time Subscriptions
+
+```typescript
+// Subscribe to inventory changes
+const channel = supabase
+  .channel('inventory-changes')
+  .on(
+    'postgres_changes',
+    {
+      event: '*', // INSERT, UPDATE, DELETE
+      schema: 'public',
+      table: 'inventory'
+    },
+    (payload) => {
+      console.log('Inventory changed:', payload);
+      // Update UI with new data
+    }
+  )
+  .subscribe();
+
+// Unsubscribe when component unmounts
+return () => {
+  supabase.removeChannel(channel);
+};
+```
+
+### Row-Level Security (RLS) Examples
+
+```sql
+-- Admin: Full access
+CREATE POLICY "Admin full access" ON inventory
+  FOR ALL
+  USING (auth.jwt() ->> 'role' = 'admin');
+
+-- Store Manager: Read own store only
+CREATE POLICY "Store manager read own store" ON inventory
+  FOR SELECT
+  USING (
+    location_id IN (
+      SELECT id FROM locations
+      WHERE manager_id = auth.uid()
+    )
+  );
+
+-- Store Manager: Update own store stock
+CREATE POLICY "Store manager update own store" ON inventory
+  FOR UPDATE
+  USING (
+    location_id IN (
+      SELECT id FROM locations
+      WHERE manager_id = auth.uid()
+    )
+  );
+```
+
+### Error Handling
+
+```typescript
+const { data, error } = await supabase
+  .from('inventory')
+  .select('*');
+
+if (error) {
+  console.error('Supabase error:', error.message);
+  // Show user-friendly error message
+  throw new Error('Failed to load inventory');
+}
+
+// Use data safely
+return data;
+```
+
+### Offline Queue Pattern
+
+```typescript
+// src/services/offlineQueue.ts
+import Dexie from 'dexie';
+import { supabase } from './supabase';
+
+interface QueuedOperation {
+  id?: number;
+  table: string;
+  operation: 'insert' | 'update' | 'delete';
+  data: any;
+  timestamp: Date;
+  synced: boolean;
+}
+
+class OfflineQueue extends Dexie {
+  queue!: Dexie.Table<QueuedOperation, number>;
+
+  constructor() {
+    super('OfflineQueue');
+    this.version(1).stores({
+      queue: '++id, table, synced, timestamp'
+    });
+  }
+
+  async addToQueue(op: Omit<QueuedOperation, 'id' | 'synced'>) {
+    await this.queue.add({
+      ...op,
+      synced: false,
+      timestamp: new Date()
+    });
+  }
+
+  async syncQueue() {
+    const pending = await this.queue
+      .where('synced')
+      .equals(0)
+      .sortBy('timestamp');
+
+    for (const op of pending) {
+      try {
+        if (op.operation === 'insert') {
+          await supabase.from(op.table).insert(op.data);
+        } else if (op.operation === 'update') {
+          await supabase.from(op.table).update(op.data).eq('id', op.data.id);
+        } else if (op.operation === 'delete') {
+          await supabase.from(op.table).delete().eq('id', op.data.id);
+        }
+        
+        // Mark as synced
+        await this.queue.update(op.id!, { synced: true });
+      } catch (error) {
+        console.error('Sync failed for operation:', op, error);
+        // Keep in queue for retry
+      }
+    }
+  }
+}
+
+export const offlineQueue = new OfflineQueue();
+
+// Auto-sync when online
+window.addEventListener('online', () => {
+  offlineQueue.syncQueue();
+});
+```
+
+### Usage in Components
+
+```tsx
+// InventoryTable.tsx
+import { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
+import { offlineQueue } from '../services/offlineQueue';
+import type { InventoryItem } from '../types/inventory';
+
+export default function InventoryTable() {
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadInventory();
+
+    // Subscribe to real-time changes
+    const channel = supabase
+      .channel('inventory-updates')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'inventory' },
+        (payload) => {
+          loadInventory(); // Refresh data
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  async function loadInventory() {
+    const { data, error } = await supabase
+      .from('inventory')
+      .select(`
+        *,
+        product:products(name, sku),
+        location:locations(name, code)
+      `)
+      .order('stock_status', { ascending: false });
+
+    if (error) {
+      console.error('Error loading inventory:', error);
+    } else {
+      setInventory(data);
+    }
+    setLoading(false);
+  }
+
+  async function updateStock(id: string, newStock: number) {
+    if (navigator.onLine) {
+      // Online: Update directly
+      const { error } = await supabase
+        .from('inventory')
+        .update({ current_stock: newStock })
+        .eq('id', id);
+
+      if (!error) {
+        loadInventory();
+      }
+    } else {
+      // Offline: Add to queue
+      await offlineQueue.addToQueue({
+        table: 'inventory',
+        operation: 'update',
+        data: { id, current_stock: newStock }
+      });
+      
+      // Update local state optimistically
+      setInventory(prev => 
+        prev.map(item => 
+          item.id === id ? { ...item, current_stock: newStock } : item
+        )
+      );
+    }
+  }
+
+  return (
+    <div>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <table>
+          {/* Render inventory table */}
+        </table>
+      )}
+    </div>
+  );
+}
+```
 
 ---
 
