@@ -1,6 +1,54 @@
 /**
  * Mock Hub Expansion Data
  * Sample data for testing hub expansion features with real Melbourne coordinates
+ *
+ * TODO [PHASE 2 - HUB EXPANSION]: Hub Management API
+ * - Endpoint: GET /api/hubs (list all regional hubs)
+ * - Endpoint: POST /api/hubs (create new hub partnership)
+ * - Endpoint: PUT /api/hubs/:id (update hub details)
+ * - Endpoint: DELETE /api/hubs/:id (deactivate hub)
+ * - Support filtering by region, hub_type, status
+ *
+ * TODO [PHASE 2 - HUB EXPANSION]: Hub Economics Calculator
+ * - Implement economic viability calculations (see hubEconomics.ts)
+ * - Endpoint: POST /api/hubs/scenarios/calculate (run scenario analysis)
+ * - Calculate: setup costs, monthly costs, break-even, ROI
+ * - Compare hub vs direct delivery economics
+ * - Factor in: distance, delivery frequency, commission rates
+ *
+ * TODO [PHASE 2 - HUB EXPANSION]: Region Management System
+ * - Endpoint: GET /api/regions (list all regions)
+ * - Endpoint: POST /api/regions (create custom region)
+ * - Support region types: default (system), custom (user-defined)
+ * - Implement boundary types: postcode_list, polygon, radius
+ * - Store region data in custom_regions table
+ *
+ * TODO [PHASE 2 - HUB EXPANSION]: Multi-Tier Stock Movement
+ * - Track 3-tier distribution: Head Office → Hub → Store
+ * - Extend stock_movements table with tier information
+ * - Calculate hub buffer stock requirements
+ * - Alert when hub stock falls below ideal buffer
+ * - Optimize bulk shipment scheduling
+ *
+ * TODO [PHASE 2 - HUB EXPANSION]: CSV Import for Partners
+ * - Endpoint: POST /api/hubs/import (bulk upload partners)
+ * - Parse CSV with partner details, coordinates
+ * - Validate address data, geocode if needed
+ * - Store in hub_csv_imports table for tracking
+ * - Support prospective vs confirmed partners
+ *
+ * TODO [PHASE 2 - HUB EXPANSION]: Hub Performance Metrics
+ * - Track: delivery times, shipment volumes, commission earned
+ * - Dashboard for hub performance analytics
+ * - Compare multiple hubs (cost efficiency, speed)
+ * - Generate partner reports for invoicing
+ *
+ * TODO [PHASE 3 - MAPPING]: Interactive Map Features
+ * - Add drawing tools for custom region boundaries
+ * - Click map to propose new hub locations
+ * - Visualize coverage radius for each hub
+ * - Heat map of delivery costs by location
+ * - Optimize hub placement algorithms
  */
 
 import type { CustomRegion, RegionalHub, HubExpansionScenario } from '../types/hub';

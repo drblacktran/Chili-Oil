@@ -2,6 +2,31 @@
  * Mock Data for Development - Benjamin's Chili Oil
  * Real store locations from inventory tracker
  * 10 retail stores across Melbourne metro area
+ *
+ * TODO [PHASE 3 - BACKEND]: Replace all mock data with real API calls
+ * - Create API service layer (e.g., src/services/api.ts)
+ * - Implement REST/GraphQL endpoints for dashboard data
+ * - Add error handling and loading states
+ * - Implement data caching strategy (React Query, SWR, or similar)
+ * - Add TypeScript response types matching API contracts
+ * - Replace static exports with async API fetchers
+ *
+ * TODO [PHASE 3 - BACKEND]: Dashboard Stats API
+ * - Endpoint: GET /api/dashboard/stats
+ * - Should aggregate real-time data from inventory table
+ * - Include: total inventory, active distributors, alerts, transfers
+ *
+ * TODO [PHASE 3 - BACKEND]: Distributors API
+ * - Endpoint: GET /api/distributors
+ * - Support filtering by region, status
+ * - Include pagination for large datasets
+ * - Return location coordinates for map visualization
+ *
+ * TODO [PHASE 3 - BACKEND]: Activity Feed API
+ * - Endpoint: GET /api/activities/recent
+ * - Real-time activity stream from stock_movements, alert_queue
+ * - Support pagination and filtering by type
+ * - Consider WebSocket/SSE for real-time updates
  */
 import type {
   DashboardStats,

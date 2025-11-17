@@ -1,6 +1,37 @@
 /**
  * Inventory Dashboard Container
  * Handles filtering and state management for inventory items
+ *
+ * TODO [PHASE 3 - BACKEND]: Replace mock data with API calls
+ * - Fetch inventory from GET /api/inventory
+ * - Add loading states while fetching data
+ * - Implement error handling for failed requests
+ * - Add React Query or SWR for data caching and revalidation
+ *
+ * TODO [PHASE 3 - BACKEND]: Batch Update API Integration
+ * - Implement POST /api/inventory/batch-update endpoint
+ * - Update multiple inventory records atomically
+ * - Create stock_movements records for audit trail
+ * - Handle optimistic updates in UI
+ * - Rollback on server errors
+ *
+ * TODO [PHASE 3 - UX]: Enhanced Filter Functionality
+ * - Add URL query params for shareable filter states
+ * - Persist filter preferences in localStorage
+ * - Add "Save Filter Preset" feature
+ * - Export filtered results to CSV/Excel
+ *
+ * TODO [PHASE 3 - UX]: Real-time Updates
+ * - WebSocket connection for live stock updates
+ * - Show notifications when stock levels change
+ * - Highlight rows that changed recently
+ * - Auto-refresh on window focus
+ *
+ * TODO [PHASE 4 - TESTING]: Component Testing
+ * - Add unit tests for filter logic
+ * - Test batch selection behavior
+ * - Test integration with InventoryTable and BatchUpdateModal
+ * - Add E2E tests for complete user workflows
  */
 
 import { useState, useMemo } from 'react';

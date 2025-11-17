@@ -1,6 +1,40 @@
 /**
  * Mock System Activity Logs
  * Stock updates, transfers, restocks, and system changes
+ *
+ * TODO [PHASE 3 - BACKEND]: Activity Logging System
+ * - Create system_logs table in database
+ * - Auto-log all critical operations (stock movements, settings changes)
+ * - Endpoint: GET /api/logs (with filtering, pagination)
+ * - Support filtering by: date range, type, severity, store, user
+ * - Implement audit trail for compliance
+ *
+ * TODO [PHASE 3 - BACKEND]: Real-time Activity Stream
+ * - WebSocket/Server-Sent Events for live updates
+ * - Push new log entries to connected clients
+ * - Dashboard widget showing recent activity
+ * - Alert admins of critical events (errors, stock outs)
+ *
+ * TODO [PHASE 3 - BACKEND]: Automated Log Generation
+ * - Trigger logs on all database mutations:
+ *   - stock_movements table -> transfer/restock logs
+ *   - inventory updates -> stock_update logs
+ *   - alert_queue changes -> alert_sent logs
+ *   - locations/products updates -> settings_change logs
+ * - Include context (who, what, when, why)
+ * - Store user_id for accountability
+ *
+ * TODO [PHASE 4 - ANALYTICS]: Log Analytics & Insights
+ * - Generate reports from activity logs
+ * - Track key metrics: transfer frequency, alert response time
+ * - Identify patterns: high-traffic stores, peak restock times
+ * - Export logs for external analysis
+ *
+ * TODO [PHASE 4 - OPTIMIZATION]: Log Archival & Cleanup
+ * - Archive old logs (> 90 days) to separate table
+ * - Implement log rotation policy
+ * - Compress archived logs for storage efficiency
+ * - Setup automated cleanup jobs
  */
 
 export interface SystemLog {

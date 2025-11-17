@@ -1,6 +1,30 @@
 /**
  * Mock Inventory Data for Development
  * Benjamin's Chili Oil - Inventory Tracking with Restock Management
+ *
+ * TODO [PHASE 3 - BACKEND]: Replace mock inventory with database-driven API
+ * - Create inventory API endpoints (GET /api/inventory)
+ * - Implement real-time stock calculations using DB triggers
+ * - Add database indexes for performance (see DATABASE_SCHEMA_V2.md)
+ * - Support filtering, sorting, pagination
+ *
+ * TODO [PHASE 3 - BACKEND]: Real-time Stock Status Calculations
+ * - Implement PostgreSQL triggers for auto-calculating:
+ *   - next_restock_date (last_restock_date + restock_cycle_days)
+ *   - stock_status (critical/low/healthy based on thresholds)
+ *   - projected_stockout_date (current_stock / average_daily_sales)
+ * - See calculate_profit() function in DATABASE_SCHEMA_V2.md for reference
+ *
+ * TODO [PHASE 3 - BACKEND]: Restock Suggestion Engine
+ * - Move calculation logic to backend (currently client-side)
+ * - Endpoint: GET /api/inventory/restock-suggestions
+ * - Factor in: sales velocity, seasonal multipliers, delivery schedules
+ * - Integrate with alert_queue for automated notifications
+ *
+ * TODO [PHASE 4 - OPTIMIZATION]: Performance Improvements
+ * - Add Redis caching for frequently accessed inventory data
+ * - Implement database materialized views for dashboard stats
+ * - Consider denormalization for read-heavy operations
  */
 
 import type { InventoryItem, InventoryDashboardStats, RestockSuggestion } from '../types/inventory';

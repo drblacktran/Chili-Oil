@@ -1,6 +1,42 @@
 /**
  * Stock Transfer Form Component
  * Create new transfers with suggested quantities
+ *
+ * TODO [PHASE 3 - BACKEND]: Transfer Creation API
+ * - Implement POST /api/transfers endpoint
+ * - Create stock_movements record in database
+ * - Update inventory stock levels atomically
+ * - Send confirmation SMS/email to destination store
+ * - Return transfer ID and updated stock levels
+ *
+ * TODO [PHASE 3 - BACKEND]: Stock Validation
+ * - Server-side validation of available stock
+ * - Check for concurrent updates (optimistic locking)
+ * - Prevent negative stock levels
+ * - Validate transfer business rules
+ *
+ * TODO [PHASE 3 - UX]: Transfer Scheduling
+ * - Add "Schedule for later" option
+ * - Calendar picker for delivery date/time
+ * - Recurring transfer templates
+ * - Bulk transfer creation (multiple stores)
+ *
+ * TODO [PHASE 3 - UX]: Enhanced Suggestions
+ * - Factor in delivery lead time
+ * - Consider seasonal multipliers
+ * - Check historical transfer patterns
+ * - Suggest optimal transfer timing
+ *
+ * TODO [PHASE 3 - UX]: Transfer History
+ * - Show recent transfers for context
+ * - "Repeat last transfer" quick action
+ * - Transfer templates based on history
+ *
+ * TODO [PHASE 4 - TESTING]: Form Validation Testing
+ * - Test all validation rules
+ * - Test edge cases (zero quantity, out of stock)
+ * - Test calculation accuracy
+ * - Add accessibility testing
  */
 
 import { useState, useMemo, useEffect } from 'react';

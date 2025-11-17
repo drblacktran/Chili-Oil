@@ -1,4 +1,39 @@
 // @ts-check
+/**
+ * Astro Configuration
+ * PWA, React, and TailwindCSS setup
+ *
+ * TODO [PHASE 2 - PWA]: Production PWA Icons
+ * - Generate PNG icons (192x192, 512x512) from SVG
+ * - Add Apple Touch icons for iOS
+ * - Create app screenshots for install prompt
+ * - See /public/PWA_ICONS_README.md for instructions
+ *
+ * TODO [PHASE 3 - BUILD]: Production Optimizations
+ * - Enable Astro output: 'hybrid' or 'server' for backend
+ * - Configure image optimization (@astrojs/image)
+ * - Add sitemap generation (@astrojs/sitemap)
+ * - Implement compression (Brotli/Gzip)
+ *
+ * TODO [PHASE 3 - PWA]: Advanced Service Worker
+ * - Implement background sync for offline actions
+ * - Add push notification support
+ * - Cache API responses more intelligently
+ * - Implement cache versioning strategy
+ * - Add offline fallback page
+ *
+ * TODO [PHASE 3 - SECURITY]: Security Headers
+ * - Add CSP (Content Security Policy)
+ * - Configure CORS for API calls
+ * - Add security middleware
+ * - Implement rate limiting
+ *
+ * TODO [PHASE 4 - PERFORMANCE]: Performance Monitoring
+ * - Integrate Sentry for error tracking
+ * - Add Web Vitals monitoring
+ * - Configure CDN for assets
+ * - Implement lazy loading for heavy components
+ */
 import { defineConfig } from 'astro/config';
 
 import react from '@astrojs/react';

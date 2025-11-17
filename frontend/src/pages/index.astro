@@ -3,6 +3,31 @@
  * Dashboard Homepage
  * Head Office command center for managing distributors, products, and inventory
  * Simplified view with visual analytics and key metrics
+ *
+ * TODO [PHASE 3 - BACKEND]: Dashboard Data API Integration
+ * - Replace all mockData imports with API calls
+ * - Fetch data server-side using Astro.fetch()
+ * - Implement caching strategy (ISR, SSG with revalidation)
+ * - Add error boundaries for failed API calls
+ * - Show skeleton loaders during data fetch
+ *
+ * TODO [PHASE 3 - UX]: Personalized Dashboard
+ * - User-specific greeting and metrics
+ * - Customizable widget layout (drag-and-drop)
+ * - Save dashboard preferences per user
+ * - Role-based dashboard views (admin vs manager)
+ *
+ * TODO [PHASE 3 - REAL-TIME]: Live Dashboard Updates
+ * - WebSocket for real-time stat updates
+ * - Notification badges for new alerts
+ * - Auto-refresh stale data
+ * - Show "Updated X minutes ago" timestamp
+ *
+ * TODO [PHASE 4 - ANALYTICS]: Dashboard Analytics
+ * - Track which widgets users interact with most
+ * - Measure time spent on dashboard
+ * - A/B test different dashboard layouts
+ * - Export dashboard data to PDF/Excel
  */
 import MainLayout from '../layouts/MainLayout.astro';
 import StatCard from '../components/StatCard';

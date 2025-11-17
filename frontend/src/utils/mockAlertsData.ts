@@ -1,6 +1,42 @@
 /**
  * Mock Alerts Data
  * Sample SMS alerts pending approval
+ *
+ * TODO [PHASE 3 - BACKEND]: Alert Queue System API
+ * - Endpoint: GET /api/alerts/queue (pending alerts)
+ * - Endpoint: GET /api/alerts/history (sent alerts)
+ * - Endpoint: POST /api/alerts/:id/approve (approve alert)
+ * - Endpoint: POST /api/alerts/:id/reject (reject alert)
+ * - Endpoint: POST /api/alerts/bulk-approve (approve multiple)
+ *
+ * TODO [PHASE 3 - BACKEND]: SMS/Email Provider Integration
+ * - Integrate Twilio for SMS notifications
+ * - Integrate SendGrid/AWS SES for email notifications
+ * - Store provider_message_id, provider_status in alert_queue table
+ * - Handle delivery confirmations and failures
+ * - Implement retry logic for failed notifications
+ *
+ * TODO [PHASE 3 - BACKEND]: Automated Alert Generation
+ * - Database triggers to auto-create alerts based on:
+ *   - Stock status changes (critical/low thresholds)
+ *   - Upcoming restock dates (3 days before)
+ *   - Overdue restocks
+ *   - Emergency restock requests
+ * - Queue alerts in alert_queue table with status='pending'
+ * - Admin approval flow before sending
+ *
+ * TODO [PHASE 2 - NOTIFICATIONS]: Web Push Notifications
+ * - Replace SMS-only approach with Web Push API
+ * - Create notifications table (not just sms_logs)
+ * - Support multiple notification channels (SMS, Email, Push, In-App)
+ * - Add user notification preferences
+ * - Implement push notification subscription management
+ *
+ * TODO [PHASE 4 - OPTIMIZATION]: Alert Intelligence
+ * - Machine learning for optimal alert timing
+ * - Consolidate multiple alerts into digest
+ * - A/B test different message templates
+ * - Track alert response rates and effectiveness
  */
 
 import type { AlertQueueItem } from '../types/inventory';

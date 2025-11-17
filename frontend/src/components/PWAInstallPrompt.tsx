@@ -1,6 +1,37 @@
 /**
  * PWA Install Prompt Component
  * Shows install prompt for Progressive Web App
+ *
+ * TODO [PHASE 2 - PWA]: Enhanced Install Experience
+ * - Show install benefits (offline access, notifications, faster load)
+ * - Add screenshots/preview of installed app
+ * - Track install analytics (acceptance rate)
+ * - Implement smart timing (don't show immediately)
+ * - Remember dismissed prompts (don't annoy users)
+ *
+ * TODO [PHASE 2 - PWA]: Platform-Specific Install
+ * - iOS-specific install instructions (Add to Home Screen)
+ * - Android-specific optimizations
+ * - Desktop install support (Chrome, Edge)
+ * - Show platform-appropriate icons and instructions
+ *
+ * TODO [PHASE 2 - PWA]: Post-Install Experience
+ * - Welcome screen after first install
+ * - Onboarding tour for new users
+ * - Enable push notifications after install
+ * - Sync offline data after install
+ *
+ * TODO [PHASE 3 - ANALYTICS]: Install Analytics
+ * - Track install prompt shows vs accepts
+ * - A/B test different prompt designs
+ * - Measure user engagement: installed vs web
+ * - Report install metrics to backend
+ *
+ * TODO [PHASE 4 - TESTING]: PWA Testing
+ * - Test install flow on multiple devices
+ * - Test offline functionality
+ * - Test update mechanism
+ * - Lighthouse PWA audit (score > 90)
  */
 
 import { useState, useEffect } from 'react';

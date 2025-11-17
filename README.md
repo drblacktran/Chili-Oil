@@ -286,16 +286,49 @@ Backend deployment strategy will be determined during architecture planning phas
 
 ## Next Steps
 
+<!-- TODO: See TODO.md in project root for comprehensive implementation checklist -->
+
 ### Immediate Priorities
+
+**TODO [PHASE 2 - NOTIFICATIONS]:**
 1. **Push Notifications Infrastructure**
    - Replace SMS approval with Web Push API
    - Notification settings page
    - Permission flow
+   - Service worker push event handling
+   - Notification preferences per user
 
+**TODO [PHASE 2 - OFFLINE]:**
 2. **Offline Data Strategy**
-   - IndexedDB implementation
-   - Queue offline actions
-   - Background sync
+   - IndexedDB implementation for local data storage
+   - Queue offline actions (transfers, updates)
+   - Background sync when connection restored
+   - Conflict resolution for concurrent updates
+   - Offline indicator with queued actions count
+
+**TODO [PHASE 3 - AUTHENTICATION]:**
+3. **User Authentication System**
+   - JWT-based authentication
+   - Role-based access control (Admin, Manager, Viewer)
+   - Password reset flow
+   - Session management
+   - OAuth integration (Google, Microsoft)
+
+**TODO [PHASE 3 - TESTING]:**
+4. **Testing Infrastructure**
+   - Unit tests with Vitest
+   - Component tests with React Testing Library
+   - E2E tests with Playwright
+   - API integration tests
+   - CI/CD test automation
+
+**TODO [PHASE 3 - MONITORING]:**
+5. **Error Tracking & Analytics**
+   - Sentry for error monitoring
+   - Google Analytics or Plausible
+   - Custom event tracking
+   - Performance monitoring (Web Vitals)
+   - User behavior analytics
 
 ### Future Phases
 

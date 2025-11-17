@@ -1,6 +1,29 @@
 /**
  * Mock Product Data
  * Demonstrates multi-product line support
+ *
+ * TODO [PHASE 3 - BACKEND]: Product Catalog API Integration
+ * - Endpoint: GET /api/products
+ * - Support category filtering, search, pagination
+ * - Include inventory counts per product
+ * - Add product variant support (size, packaging variations)
+ *
+ * TODO [PHASE 3 - BACKEND]: Product Management CRUD Operations
+ * - POST /api/products - Create new products
+ * - PUT /api/products/:id - Update product details
+ * - DELETE /api/products/:id - Soft delete (set status='inactive')
+ * - Implement role-based access control (only admins can modify)
+ *
+ * TODO [PHASE 3 - BACKEND]: Image Management
+ * - Integrate Cloudinary or AWS S3 for product images
+ * - Store image_url, image_public_id, thumbnail_url in DB
+ * - Add image upload/delete endpoints
+ * - Implement image optimization and CDN delivery
+ *
+ * TODO [PHASE 2 - HUB EXPANSION]: Category Management
+ * - Create categories table for dynamic category management
+ * - Move mockProductCategories to database
+ * - Support category hierarchy and custom icons/colors
  */
 import type { Product, ProductCategoryInfo } from '../types/product';
 

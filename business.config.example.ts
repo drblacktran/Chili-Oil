@@ -5,6 +5,31 @@
  * The .local.ts file is gitignored and will not be committed.
  *
  * DO NOT put real values in this example file.
+ *
+ * TODO [PHASE 3 - BACKEND]: Move to Database
+ * - Migrate business configuration to database tables
+ * - Create admin UI for editing settings
+ * - Implement configuration versioning
+ * - Add audit trail for config changes
+ * - Keep file-based config for local development only
+ *
+ * TODO [PHASE 3 - SECURITY]: Secrets Management
+ * - Move sensitive data to environment variables
+ * - Use secret management service (AWS Secrets Manager, Vault)
+ * - Never commit real values to git
+ * - Rotate API keys regularly
+ *
+ * TODO [PHASE 3 - VALIDATION]: Configuration Validation
+ * - Add Zod or Joi schema validation
+ * - Validate config on app startup
+ * - Provide helpful error messages for invalid config
+ * - Document all configuration options
+ *
+ * TODO [PHASE 4 - MULTI-TENANT]: Multi-Business Support
+ * - Support multiple businesses in one instance
+ * - Tenant-specific configuration
+ * - White-label branding per business
+ * - Isolated data per tenant
  */
 
 export const BUSINESS_CONFIG = {

@@ -2,6 +2,41 @@
  * HubExpansionMap Component
  * Interactive map for visualizing stores, hubs, and regions in Melbourne
  * Uses OpenStreetMap via Leaflet library
+ *
+ * TODO [PHASE 2 - HUB EXPANSION]: Hub API Integration
+ * - Fetch hub and region data from GET /api/hubs and /api/regions
+ * - Real-time updates when hubs/stores change
+ * - Implement loading states and error handling
+ *
+ * TODO [PHASE 2 - MAPPING]: Interactive Hub Placement
+ * - Click map to propose new hub location
+ * - Draw custom region boundaries with polygon tool
+ * - Calculate coverage radius visualization
+ * - Show estimated delivery times from hub to stores
+ *
+ * TODO [PHASE 2 - MAPPING]: Economic Overlay
+ * - Heat map showing delivery costs by location
+ * - Visualize cost savings with proposed hubs
+ * - Show ROI projections on map
+ * - Highlight underserved areas (high cost, low coverage)
+ *
+ * TODO [PHASE 3 - UX]: Enhanced Map Features
+ * - Geocoding for address search
+ * - Route optimization visualization
+ * - Traffic-aware delivery time estimates
+ * - Clustering for many stores in small area
+ * - Export map view as image/PDF
+ *
+ * TODO [PHASE 4 - ANALYTICS]: Map Analytics
+ * - Track which stores/hubs users view most
+ * - Log map interactions for UX improvements
+ * - Analyze region performance metrics
+ *
+ * TODO [PHASE 4 - TESTING]: Map Component Testing
+ * - Test marker rendering and clustering
+ * - Test region boundary calculations
+ * - Mock Leaflet for unit tests
+ * - Test mobile touch interactions
  */
 
 import { useEffect, useRef, useState } from 'react';
